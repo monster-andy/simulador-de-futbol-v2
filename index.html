@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05080f">
+<title>Simulador de Fútbol · Argentina, Inglaterra y España</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060a13;--pn:#0e1628;--pn2:#132038;--pn3:#1a2a48;--ln:rgba(148,163,184,.13);--tx:#eef2fb;--mut:#8796b3;--acc:#5bc0ff;--acc2:#f5c518;--accd:#0a3456;--gold:#f5c518;--red:#ef4444;--blu:#3b82f6;--grn:#22c55e;--g:var(--acc);--b:var(--blu);--r:var(--red);--fc:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;--fb:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark}
+body[data-c=ar]{--acc:#5bc0ff;--acc2:#f5c518;--accd:#0a3a63}
+body[data-c=en]{--acc:#b072ff;--acc2:#2ee6c8;--accd:#341160}
+body[data-c=es]{--acc:#ff5263;--acc2:#ffc531;--accd:#560d18}
+*{box-sizing:border-box}html,body{margin:0}[hidden]{display:none!important}
+body{min-height:100vh;color:var(--tx);font:15px/1.45 var(--fb);-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0px);
+background:radial-gradient(1100px 460px at 50% -140px,color-mix(in srgb,var(--acc) 24%,transparent),transparent 70%),repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 90px,transparent 90px 180px),linear-gradient(180deg,#081124,#05080f 65%) fixed;transition:background .4s}
+button{font-family:inherit;cursor:pointer;color:inherit}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* ===== barra superior ===== */
+.top{position:sticky;top:0;z-index:20;background:rgba(5,9,18,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--ln);padding-top:env(safe-area-inset-top,0px)}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,var(--acc),var(--acc2) 50%,transparent)}
+.top .in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:9px 14px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.logo{width:36px;height:34px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));clip-path:polygon(16% 0,100% 0,84% 100%,0 100%);font-size:17px}
+.brand b{display:block;font:800 1.15rem/1 var(--fc);letter-spacing:.07em;text-transform:uppercase}
+.brand small{display:flex;align-items:center;gap:6px;font:700 .66rem/1.4 var(--fc);letter-spacing:.2em;color:var(--mut);text-transform:uppercase}
+.brand small i{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,.25);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+.cty{display:flex;gap:2px;background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:3px}
+.cty button{display:flex;align-items:center;gap:7px;border:0;background:none;padding:7px 11px;border-radius:7px;font:700 .86rem/1 var(--fc);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.cty button:hover{color:#fff}
+.cty button.on{background:var(--pn3);color:#fff;box-shadow:inset 0 -2px 0 var(--acc)}
+.cty .x{display:none}
+.fl{width:20px;height:14px;flex:none;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.22)}
+.fl.ar{background:radial-gradient(circle,#f6b40e 0 2px,transparent 2.5px),linear-gradient(#74acdf 33%,#fff 33% 67%,#74acdf 67%)}
+.fl.en{background:linear-gradient(90deg,transparent 41%,#ce1124 41% 59%,transparent 59%),linear-gradient(transparent 36%,#ce1124 36% 64%,transparent 64%),#fff}
+.fl.es{background:linear-gradient(#aa151b 25%,#f1bf00 25% 75%,#aa151b 75%)}
+@media(min-width:700px){.cty .x{display:inline}.cty .k{display:none}}
+
+.wrap{max-width:1080px;margin:0 auto;padding:16px 14px 30px}
+
+/* ===== cabecera tipo zócalo ===== */
+.hero{position:relative;overflow:hidden;background:linear-gradient(112deg,var(--accd) 0%,var(--pn) 58%);border:1px solid var(--ln);border-radius:14px;padding:16px 20px 16px 26px;margin-bottom:14px;box-shadow:0 18px 40px -24px rgba(0,0,0,.8)}
+.hero::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(var(--acc),var(--acc2))}
+.hero::after{content:"";position:absolute;right:-40px;top:-30px;width:380px;height:260px;background:repeating-linear-gradient(115deg,rgba(255,255,255,.055) 0 12px,transparent 12px 30px);-webkit-mask:linear-gradient(90deg,transparent,#000 70%);mask:linear-gradient(90deg,transparent,#000 70%);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.ht{font:800 clamp(1.7rem,4.4vw,2.5rem)/1.02 var(--fc);text-transform:uppercase;letter-spacing:.015em;margin:14px 0 3px;text-shadow:0 2px 16px rgba(0,0,0,.4)}
+.hs{color:#c5d0e8;font-size:.92rem;margin:0 0 12px;font-weight:500}
+.sw{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.sw+.sw{margin-top:6px}
+.sw button{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#d5ddef;font:700 .8rem/1 var(--fc);letter-spacing:.06em;text-transform:uppercase;padding:8px 12px;border-radius:6px;transition:background .15s}
+.sw button:hover{background:rgba(255,255,255,.14)}
+.sw button.on{background:#fff;color:#0a1020;border-color:#fff}
+.sw .grp{min-width:46px;font:700 .64rem var(--fc);letter-spacing:.2em;color:var(--mut);text-transform:uppercase}
+.stp{display:flex;gap:3px;flex-wrap:wrap}
+.st{font:700 .74rem/1 var(--fc);letter-spacing:.08em;text-transform:uppercase;padding:7px 18px 7px 16px;background:rgba(255,255,255,.07);color:#a3b0cc;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,0 100%,9px 50%)}
+.st:first-child{clip-path:polygon(0 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,0 100%);padding-left:12px}
+.st.dn{background:color-mix(in srgb,var(--acc) 28%,transparent);color:#fff}
+.st.cu{background:var(--acc);color:#061020}
+
+/* ===== acciones ===== */
+.act{background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:12px;margin-bottom:14px}
+button.big{width:100%;border:0;border-radius:10px;padding:15px;background:linear-gradient(100deg,var(--acc),color-mix(in srgb,var(--acc) 62%,#fff));color:#051020;font:800 1.15rem/1 var(--fc);letter-spacing:.09em;text-transform:uppercase;box-shadow:0 10px 26px -12px var(--acc);position:relative;overflow:hidden;transition:filter .15s,transform .1s}
+button.big::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .5s}
+button.big:hover{filter:brightness(1.07)}button.big:hover::after{left:120%}
+button.big:active{transform:scale(.99)}
+button:disabled{opacity:.35;cursor:default}button.big:disabled{box-shadow:none}
+.act2{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.act2 button{flex:1 1 auto;background:var(--pn2);border:1px solid var(--ln);border-radius:9px;padding:10px 14px;font:700 .86rem/1 var(--fc);letter-spacing:.07em;text-transform:uppercase;color:var(--tx)}
+.act2 button:hover:not(:disabled){border-color:color-mix(in srgb,var(--acc) 55%,transparent)}
+.help{color:var(--mut);font-size:.84rem;margin:9px 2px 0}
+
+/* ===== pestañas ===== */
+.tabs{display:flex;gap:2px;margin-bottom:14px;border-bottom:1px solid var(--ln);overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;color:var(--mut);font:700 .92rem/1 var(--fc);letter-spacing:.09em;text-transform:uppercase;padding:11px 14px;white-space:nowrap}
+.tabs button:hover{color:#fff}
+.tabs button.on{color:#fff;border-bottom-color:var(--acc)}
+
+/* ===== paneles ===== */
+.c,.rd{background:var(--pn);border:1px solid var(--ln);border-radius:12px;margin-bottom:14px;overflow:hidden;box-shadow:0 14px 30px -24px rgba(0,0,0,.9)}
+.c h2,.rd h3{position:relative;margin:0;padding:10px 14px 10px 18px;font:800 .9rem/1.2 var(--fc);letter-spacing:.13em;text-transform:uppercase;background:linear-gradient(90deg,var(--pn3),var(--pn) 80%);border-bottom:1px solid var(--ln)}
+.c h2::before,.rd h3::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--acc)}
+#secAR .c>*:not(h2){margin-left:12px;margin-right:12px}
+#secAR .c>.sc{margin:0}
+#secAR .c>h2+*{margin-top:8px}
+#secAR .c>*:last-child{margin-bottom:12px}
+#secAR .c>.sc:last-child{margin-bottom:0}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin-bottom:14px}.g .c{margin:0}
+.sc{overflow-x:auto}
+.lg{color:var(--mut);font-size:.78rem;line-height:1.6}
+.bd{display:inline-block;flex:none;width:16px;height:16px;border-radius:50%;margin-right:8px;vertical-align:-3px;box-shadow:0 0 0 1.5px rgba(255,255,255,.28),0 1px 3px rgba(0,0,0,.6)}
+
+/* tablas (Argentina) */
+#secAR table{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}
+#secAR th{font:700 .7rem var(--fc);letter-spacing:.13em;text-transform:uppercase;color:var(--mut);padding:8px 6px;text-align:center;background:rgba(0,0,0,.22);white-space:nowrap}
+#secAR td{padding:7px 6px;text-align:center;border-top:1px solid var(--ln);white-space:nowrap}
+#secAR tr:nth-child(odd) td{background:rgba(255,255,255,.016)}
+#secAR td:first-child{width:38px;font:800 .95rem var(--fc);color:var(--mut)}
+#secAR td.n,#secAR th.n{text-align:left}#secAR td.n{font-weight:600}
+#secAR td.p{font:800 1.08rem var(--fc);color:#fff}
+#secAR tr.q td{background:color-mix(in srgb,var(--acc) 9%,transparent)}
+#secAR tr.q td:first-child{box-shadow:inset 3px 0 var(--acc);color:var(--acc)}
+#secAR tr.rd td:first-child{box-shadow:inset 3px 0 var(--blu);color:#83b4ff}
+#secAR tr.d td{background:rgba(239,68,68,.09)}
+#secAR tr.d td:first-child{box-shadow:inset 3px 0 var(--red);color:#ff8f8f}
+#secAR tr.cut td{border-bottom:2px solid color-mix(in srgb,var(--acc) 65%,transparent)}
+
+/* resultados */
+.m{display:flex;align-items:center;gap:10px;padding:7px 2px;border-top:1px solid var(--ln);font-size:.88rem}
+.c h2+.m{border-top:0}
+.m span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#c9d3e8}
+.m span:first-child{text-align:right}.m span:last-child{text-align:left}
+.m .w2{color:#fff;font-weight:700}
+.m b{flex:none;min-width:64px;text-align:center;background:#050912;border:1px solid var(--ln);border-bottom:2px solid var(--acc);border-radius:5px;padding:4px 8px;font:800 1.02rem/1 var(--fc);letter-spacing:.07em;color:#fff}
+.m b button,.mc .pn button{padding:3px 10px;border-radius:5px;background:var(--acc);color:#051020;border:0;font:800 .8rem/1 var(--fc);letter-spacing:.06em;text-transform:uppercase}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:4px 14px;padding:8px 0}
+.pg .m{border-top:0;border-bottom:1px solid var(--ln)}
+.mc{background:var(--pn2);border:1px solid var(--ln);border-radius:8px;overflow:hidden}
+.mc .r{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px;color:var(--mut);font-size:.88rem}
+.mc .r+.r{border-top:1px solid var(--ln)}
+.mc .r span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc .r b{flex:none;min-width:28px;text-align:center;background:#050912;border-radius:4px;padding:2px 0;font:800 1.05rem/1.2 var(--fc);color:#fff}
+.mc .r.w{color:#fff;font-weight:700;box-shadow:inset 3px 0 var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent)}
+.mc small{color:var(--mut);font:700 .7rem var(--fc);letter-spacing:.06em;margin-left:5px}
+.pn{font-size:.72rem;color:var(--mut);text-align:right;padding:3px 10px 6px;letter-spacing:.04em}
+
+/* zócalos de campeones */
+.trs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-bottom:14px}
+.tr{display:grid;grid-template-columns:46px 1fr;align-content:center;background:linear-gradient(90deg,var(--pn3),var(--pn));border:1px solid var(--ln);border-radius:10px;overflow:hidden;min-height:62px;animation:pop .35s ease both}
+.tr span{grid-row:1/3;display:grid;place-items:center;background:linear-gradient(160deg,var(--gold),#a87800);font-size:1.35rem}
+.tr small{padding:8px 12px 0;font:700 .66rem/1.2 var(--fc);letter-spacing:.17em;text-transform:uppercase;color:var(--acc2)}
+.tr b{padding:1px 12px 8px;font:800 1.12rem/1.15 var(--fc);text-transform:uppercase;letter-spacing:.02em}
+.tr b small{padding:0;color:var(--mut);letter-spacing:.04em}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+details.c{padding:12px 16px}
+details summary{cursor:pointer;font:800 .9rem var(--fc);letter-spacing:.12em;text-transform:uppercase}
+details ul{color:#c3cde3;font-size:.88rem;line-height:1.6;padding-left:18px;margin:10px 0 0}
+details li{margin:5px 0}
+
+/* ===== Europa ===== */
+#secEU .leg{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:.8rem;color:#c3cde3;margin:0 2px 10px}
+#secEU .leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+#secEU .msg{color:var(--acc2);min-height:1em}
+#secEU .msg:empty{display:none}
+#secEU .win{display:none;position:relative;background:linear-gradient(90deg,var(--pn3),var(--pn));border:1px solid var(--ln);border-radius:12px;padding:12px 16px 12px 66px;margin-bottom:14px;overflow:hidden;animation:pop .35s ease both}
+#secEU .win::before{content:"🏆";position:absolute;left:0;top:0;bottom:0;width:50px;display:grid;place-items:center;font-size:1.5rem;background:linear-gradient(160deg,var(--gold),#a87800)}
+#secEU .win small{display:block;font:700 .68rem var(--fc);letter-spacing:.17em;text-transform:uppercase;color:var(--acc2)}
+#secEU .win b{display:block;font:800 1.55rem/1.1 var(--fc);text-transform:uppercase}
+#secEU .win .sub{font-size:.84rem;color:var(--mut);margin-top:3px}
+#secEU .hd,#secEU .row{display:grid;grid-template-columns:40px minmax(0,1fr) 46px 50px 54px 40px;align-items:center;gap:4px;padding-right:12px}
+#secEU .hd{height:32px;font:700 .7rem var(--fc);letter-spacing:.13em;text-transform:uppercase;color:var(--mut);background:rgba(0,0,0,.22)}
+#secEU .hd span:first-child{text-align:center}
+#secEU .hd span:nth-child(n+3),#secEU .row span:nth-child(n+3){text-align:right}
+#secEU .row{height:40px;border-top:1px solid var(--ln);font-size:.9rem;font-variant-numeric:tabular-nums}
+#secEU .row:nth-child(odd){background:rgba(255,255,255,.016)}
+#secEU .row .ps{align-self:stretch;display:grid;place-items:center;font:800 .95rem var(--fc);color:var(--mut)}
+#secEU .row.z1{background:color-mix(in srgb,var(--acc) 9%,transparent)}
+#secEU .row.z1 .ps{box-shadow:inset 3px 0 var(--acc);color:var(--acc)}
+#secEU .row.z2 .ps{box-shadow:inset 3px 0 var(--blu);color:#83b4ff}
+#secEU .row.z3{background:rgba(239,68,68,.09)}
+#secEU .row.z3 .ps{box-shadow:inset 3px 0 var(--red);color:#ff8f8f}
+#secEU .row .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#secEU .row .nm em{font-style:normal;margin-left:6px;font-size:.8rem}
+#secEU .fin{font:800 1.08rem var(--fc);color:#fff}
+#secEU .mut{color:var(--mut)}
+#secEU .up{color:var(--grn);font:800 .8rem var(--fc)}#secEU .dn{color:#ff7a7a;font:800 .8rem var(--fc)}
+#secEU .row.pop{animation:pop .35s ease both}
+#secEU .n{color:var(--mut);font-size:.8rem;margin:12px 2px 0;line-height:1.55}
+#secEU .mt{display:grid;grid-template-columns:minmax(0,1fr) 80px minmax(0,1fr);gap:10px;padding:7px 12px;border-top:1px solid var(--ln);align-items:center;font-size:.88rem}
+#secEU .rd h3+.mt{border-top:0}
+#secEU .mt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#aab6cf}
+#secEU .mt .a{text-align:right}
+#secEU .mt .sc{text-align:center;color:#fff;background:#050912;border:1px solid var(--ln);border-bottom:2px solid var(--acc);border-radius:5px;padding:4px 0;font:800 .95rem/1 var(--fc);letter-spacing:.04em;overflow:visible}
+#secEU .mt .w{color:#fff;font-weight:700}
+#secEU .fr{display:grid;grid-template-columns:minmax(0,1fr) 50px 10px 50px minmax(0,1fr);gap:6px;align-items:center;padding:6px 12px;border-top:1px solid var(--ln);font-size:.88rem}
+#secEU .rd h3+.fr{border-top:0}
+#secEU .fr span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#secEU .fr .a{text-align:right}#secEU .fr b{text-align:center;color:var(--mut)}
+#secEU .fr input{width:100%;text-align:center;font:800 1.05rem/1 var(--fc);border:1px solid var(--ln);border-bottom:2px solid var(--acc);border-radius:5px;background:#050912;color:#fff;padding:6px 2px;-moz-appearance:textfield}
+#secEU .fr input::-webkit-inner-spin-button{-webkit-appearance:none}
+#secEU .fbar{display:flex;gap:8px;padding:10px 12px;flex-wrap:wrap;border-top:1px solid var(--ln)}
+#secEU .fb{flex:1;border:1px solid color-mix(in srgb,var(--acc) 50%,transparent);border-radius:9px;background:color-mix(in srgb,var(--acc) 14%,transparent);color:#fff;font:700 .86rem/1 var(--fc);letter-spacing:.07em;text-transform:uppercase;padding:11px}
+#secEU .fb:hover{background:color-mix(in srgb,var(--acc) 24%,transparent)}
+
+footer{max-width:1080px;margin:0 auto;padding:4px 14px 28px;color:var(--mut);font:600 .76rem var(--fc);letter-spacing:.14em;text-transform:uppercase;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+footer a{color:var(--mut)}
+@media(max-width:560px){.hm{display:none}.wrap{padding:12px 10px 24px}.hero{padding:14px 14px 14px 20px}.brand small{display:none}.brand>div:last-child{display:none}#secEU .hd,#secEU .row{grid-template-columns:34px minmax(0,1fr) 34px 42px 46px 34px;font-size:.84rem}}
+</style></head><body data-c="ar">
+<header class="top"><div class="in">
+<div class="brand"><div class="logo">⚽</div><div><b>Simulador de Fútbol</b><small><i></i>Temporada en vivo</small></div></div>
+<nav class="cty" id="cty">
+<button data-c="ar"><span class="fl ar"></span><span class="x">Argentina</span><span class="k">ARG</span></button>
+<button data-c="en"><span class="fl en"></span><span class="x">Inglaterra</span><span class="k">ING</span></button>
+<button data-c="es"><span class="fl es"></span><span class="x">España</span><span class="k">ESP</span></button>
+</nav></div></header>
+
+<main class="wrap">
+<section id="secAR">
+<div class="hero"><div class="sw" id="sw"></div><div class="ht" id="ht"></div><div class="hs" id="hs"></div><div class="stp" id="stp"></div></div>
+<div id="ban"></div>
+<div class="act"><button id="b1" class="big"></button>
+<div class="act2"><button id="b2"></button><button id="b5"></button><button id="b4">↺ Empezar de cero</button></div>
+<p class="help" id="help"></p></div>
+<div class="tabs" id="tabs"></div>
+<div id="v"></div>
+<details class="c"><summary>❓ ¿Cómo funciona?</summary><ul>
+<li>Hay <b>2 torneos</b> en el año: Apertura y Clausura. Los 30 equipos están en <b>2 zonas de 15</b>.</li>
+<li>Cada equipo juega <b>16 fechas</b>: 14 contra su zona y 2 contra equipos de la otra zona (uno es su clásico).</li>
+<li>Los <b>8 primeros de cada zona</b> (en verde) pasan a <b>playoffs</b>: octavos, cuartos, semis y final, todos a un solo partido.</li>
+<li>La <b>tabla anual</b> suma los puntos de las dos fases regulares: el 1° es <b>Campeón de Liga</b> y los dos últimos <b>descienden</b> a la Primera Nacional, mientras suben los dos de la B (campeón y ganador del Reducido).</li>
+<li>Los resultados dependen del rendimiento 2024-2026 de cada equipo, su grandeza (los 10 grandes) y algo de azar.</li>
+<li>Al terminar la Liga y la Primera Nacional podés <b>pasar a la próxima temporada</b>: los 2 últimos de la Liga bajan, suben los 2 de la B y entran 4 equipos nuevos desde abajo.</li><li><b>🎯 Partido a partido:</b> activalo para jugar de a un partido (en la Liga y la Primera Nacional se juega el próximo; en la B Metro, el Federal A y la Copa elegís cuál con el botón ▶).</li><li><b>Primera C:</b> 28 equipos en 2 zonas de 14 (2 ruedas y una fecha interzonal). Los ganadores de zona juegan la final por el 1º ascenso; del 2º al 7º de cada zona juegan el Reducido por el 2º ascenso; los últimos de cada zona juegan por la desafiliación y la promoción con un equipo amateur.</li><li><b>B Metropolitana:</b> 22 equipos, tabla única de 42 fechas; el campeón asciende, del 2º al 9º juegan el Reducido y los 2 últimos descienden. <b>Federal A:</b> 37 equipos en 4 zonas, Zona Campeonato, playoffs y Reválida (versión simplificada). <b>Copa Argentina:</b> 64 equipos, eliminación directa a partido único.</li><li>Simplificado: el descenso de la Liga es por los 2 últimos de la tabla anual (sin promedios); algunos interzonales y el cuadro de playoffs son aproximados.</li><li><b>Primera Nacional (la B):</b> 36 equipos en 2 zonas de 18, todos contra todos ida y vuelta más una fecha interzonal. Los primeros de cada zona juegan una final por el 1º ascenso; del 2º al 8º juegan el Reducido por el 2º ascenso. Los 2 últimos de cada zona descienden.</li></ul></details>
+</section>
+
+<section id="secEU" hidden>
+<div class="hero"><div class="sw" id="e-tabs"></div><div class="sw" id="e-tabs2"></div><div class="ht" id="e-ht"></div><div class="hs" id="e-hs"></div></div>
+<div class="act"><button class="big" id="e-go"></button>
+<div class="act2"><button id="e-sv">💾 Guardar</button><button id="e-rs">🔄 Empezar desde cero</button><button id="e-rt">📅 Tablas de hoy</button></div>
+<p class="help msg" id="e-msg"></p></div>
+<div class="win" id="e-win"></div>
+<div class="leg" id="e-leg"></div>
+<div class="c" id="e-lgcard"><h2 id="e-tt">Tabla de posiciones</h2><div class="hd" id="e-hd"></div><div id="e-rows"></div></div>
+<div id="e-fxv"></div><div id="e-cupv"></div><p class="n" id="e-nt"></p>
+</section>
+</main>
+<footer><span>Simulador hecho por <a href="https://github.com/monster-andy" target="_blank" rel="noopener">monster-andy</a></span><span>Italia, Alemania y Francia · próximamente</span></footer>
+
+<script>
+
+var Q=[[["Boca",82],["River",81]],[["Independiente",72],["Racing",77]],[["San Lorenzo",77],["Huracán",70]],[["Newell’s",63],["Rosario Central",81]],[["Lanús",70],["Banfield",63]],[["Vélez",76],["Tigre",63]],[["Platense",70],["Argentinos",74]],[["Estudiantes LP",76],["Gimnasia LP",62]],[["Talleres",71],["Belgrano",72]],[["Gimnasia (Mza)",59],["Ind. Rivadavia",72]],[["Unión",64],["Sarmiento",58]],[["Riestra",68],["Barracas Central",63]],[["Instituto",62],["Atl. Tucumán",62]],[["Central Córdoba",63],["Estudiantes (RC)",55]],[["Defensa y Justicia",64],["Aldosivi",57]]];
+var T=[];Q.forEach(function(p,i){T[i]={n:p[0][0],s:p[0][1]};T[15+i]={n:p[1][0],s:p[1][1]}});
+var E,tour,stage,fecha,rd,R,FX,PO,champ,last,tab,tb,seed,troph,bye;
+function nm(i){return T[i].n}
+function mkFix(flip){var F=[],r,z,a,b,f,x,i;
+for(r=0;r<15;r++){f=[];for(z=0;z<2;z++)for(a=0;a<15;a++){b=((r-a)%15+15)%15;if(a<b){var d=(a-b+15)%15;f.push(d<=7?[z*15+a,z*15+b]:[z*15+b,z*15+a])}}
+x=(8*r)%15;f.push(x%2?[x,15+x]:[15+x,x]);F.push(f)}
+f=[];for(i=0;i<15;i++)f.push(i%2?[i,15+(i+1)%15]:[15+(i+1)%15,i]);F.push(f);
+if(flip)F=F.map(function(g){return g.map(function(m){return[m[1],m[0]]})});return F}
+function pois(l){var L=Math.exp(-l),k=0,p=1;do{k++;p*=Math.random()}while(p>L);return k-1}
+function play(h,a,neu){var d=(E[h]-E[a])/30,fh=neu?1.1:1.28,fa=neu?1.1:0.95;return[pois(fh*Math.exp(d/2)),pois(fa*Math.exp(-d/2))]}
+function newSt(){return T.map(function(){return{pj:0,g:0,e:0,p:0,gf:0,gc:0,pt:0}})}
+function rec(t,h,a,x,y){var H=R[t][h],A=R[t][a];H.pj++;A.pj++;H.gf+=x;H.gc+=y;A.gf+=y;A.gc+=x;
+if(x>y){H.g++;H.pt+=3;A.p++}else if(x<y){A.g++;A.pt+=3;H.p++}else{H.e++;A.e++;H.pt++;A.pt++}}
+function cmp(t){return function(x,y){var a=R[t][x],b=R[t][y];return b.pt-a.pt||(b.gf-b.gc)-(a.gf-a.gc)||b.gf-a.gf||tb[x]-tb[y]}}
+function zone(z,t){var ids=[];for(var i=0;i<15;i++)ids.push(z*15+i);return ids.sort(cmp(t))}
+function startTour(t){E=T.map(function(x){return x.s+(Math.random()+Math.random()+Math.random()-1.5)*7});tour=t;stage="reg";fecha=0;rd=0;R[t]=newSt();FX=mkFix(t==1);PO=null;last=null;tab=0}
+function reset(){R=[null,null,R&&R[2]];champ=[null,null];troph=null;tb=T.map(Math.random);startTour(0);draw()}
+function best(x,y){return seed[x]<=seed[y]?[x,y]:[y,x]}
+function startPO(){var A=zone(0,tour).slice(0,8),B=zone(1,tour).slice(0,8);seed={};
+A.forEach(function(id,k){seed[id]=k+1+(k+1)/100});B.forEach(function(id,k){seed[id]=k+1+(k+1)/100+0.001});
+var o=[[A[0],B[7]],[B[3],A[4]],[A[1],B[6]],[B[2],A[5]],[B[0],A[7]],[A[3],B[4]],[B[1],A[6]],[A[2],B[5]]];
+PO=[o.map(function(m){var q=best(m[0],m[1]);return{h:q[0],a:q[1]}})];PO.names=["Octavos","Cuartos","Semifinales","Final"];stage="po";rd=0;tab=2}
+function ko(m,neu){var r=play(m.h,m.a,neu);m.gh=r[0];m.ga=r[1];
+if(r[0]==r[1]){m.pen=1;var p=0.5+(E[m.h]-E[m.a])/400;m.w=Math.random()<p?m.h:m.a}else m.w=r[0]>r[1]?m.h:m.a}
+function step(){if(stage=="reg"){var F=FX[fecha];if(!last||last.f!=fecha)last={t:"Fecha "+(fecha+1),f:fecha,m:[]};var n=ONE?1:F.length-last.m.length;while(n--&&last.m.length<F.length){var m=F[last.m.length],r=play(m[0],m[1]);rec(tour,m[0],m[1],r[0],r[1]);last.m.push([m[0],m[1],r])}if(last.m.length>=F.length){fecha++;if(fecha>=16)startPO()}}
+else if(stage=="po"){var ms=PO[rd],td=ms.filter(function(m){return m.w==null});(ONE?td.slice(0,1):td).forEach(function(m){ko(m,rd==3)});if(ms.some(function(m){return m.w==null}))return;
+var ws=PO[rd].map(function(m){return m.w});
+if(rd==3){champ[tour]=ws[0];stage="end";if(tour==1){var a=champ[0],b=champ[1];if(a!=b){var q=best(a,b),m={h:q[0],a:q[1]};ko(m,true);troph=m}else troph={same:a};tab=3}}
+else{var nx=[];for(var i=0;i<ws.length;i+=2){var q=best(ws[i],ws[i+1]);nx.push({h:q[0],a:q[1]})}PO.push(nx);rd++}}}
+function annual(){var ids=T.map(function(_,i){return i}),t=function(i){return(R[0]?R[0][i].pt:0)+(R[1]?R[1][i].pt:0)},d=function(i){var s=0;[0,1].forEach(function(k){if(R[k])s+=R[k][i].gf-R[k][i].gc});return s};
+return ids.sort(function(x,y){return t(y)-t(x)||d(y)-d(x)||tb[x]-tb[y]})}
+var C={"Boca":["#0a2a6b","#f5c518"],"River":["#fff","#e4002b"],"Independiente":["#d1001f","#fff"],"Racing":["#7fc4ec","#fff"],"San Lorenzo":["#0a2a6b","#c8102e"],"Huracán":["#fff","#c8102e"],"Newell’s":["#c8102e","#111"],"Rosario Central":["#1e4fa3","#f5c518"],"Lanús":["#8b1a2b","#8b1a2b"],"Banfield":["#1b7a3a","#fff"],"Vélez":["#fff","#1e4fa3"],"Tigre":["#1e4fa3","#c8102e"],"Platense":["#6b3a1e","#fff"],"Argentinos":["#c8102e","#fff"],"Estudiantes LP":["#c8102e","#fff"],"Gimnasia LP":["#1e4fa3","#fff"],"Talleres":["#1e4fa3","#fff"],"Belgrano":["#7fc4ec","#fff"],"Gimnasia (Mza)":["#1e4fa3","#fff"],"Ind. Rivadavia":["#1e4fa3","#fff"],"Unión":["#c8102e","#fff"],"Sarmiento":["#1b7a3a","#fff"],"Riestra":["#fff","#111"],"Barracas Central":["#c8102e","#f5c518"],"Instituto":["#c8102e","#fff"],"Atl. Tucumán":["#7fc4ec","#fff"],"Central Córdoba":["#111","#fff"],"Estudiantes (RC)":["#c8102e","#111"],"Defensa y Justicia":["#f5c518","#1b7a3a"],"Aldosivi":["#f5c518","#1b7a3a"]};
+function tm(i){var c=C[T[i].n];if(!c){var h=0,t=T[i].n;for(var k=0;k<t.length;k++)h=(h*31+t.charCodeAt(k))%360;return"<i class='bd' style='background:hsl("+h+",55%,48%)'></i>"+t}return"<i class='bd' style='background:linear-gradient(135deg,"+c[0]+" 50%,"+c[1]+" 50%)'></i>"+nm(i)}
+function zt(z){var o=zone(z,tour),h="<tr><th>#</th><th class='n'>Equipo</th><th>PJ</th><th class='hm'>G</th><th class='hm'>E</th><th class='hm'>P</th><th class='hm'>DG</th><th>Pts</th></tr>";
+o.forEach(function(i,k){var s=R[tour][i];h+="<tr class='"+(k<8?"q":"")+(k==7?" cut":"")+"'><td>"+(k+1)+"</td><td class='n'>"+tm(i)+"</td><td>"+s.pj+"</td><td class='hm'>"+s.g+"</td><td class='hm'>"+s.e+"</td><td class='hm'>"+s.p+"</td><td class='hm'>"+(s.gf-s.gc)+"</td><td class='p'>"+s.pt+"</td></tr>"});
+return"<div class='c'><h2>Zona "+(z?"B":"A")+"</h2><div class='sc'><table>"+h+"</table></div><div class='lg'>🟩 Los 8 primeros pasan a playoffs</div></div>"}
+function mc(m){var pl=m.w!=null;function row(t,g){return"<div class='r"+(pl&&m.w==t?" w":"")+"'><span>"+tm(t)+"<small>"+(t<15?"A":"B")+Math.round(seed[t])+"</small></span><b>"+(pl?g:"")+"</b></div>"}
+return"<div class='mc'>"+row(m.h,m.gh)+row(m.a,m.ga)+(m.pen?"<div class='pn'>Definido por penales</div>":"")+"</div>"}
+function view(){var h="";
+if(tab==0){h="<div class='g'>"+zt(0)+zt(1)+"</div>";
+if(last)h+="<div class='c' style='margin-top:12px'><h2>Resultados de la "+last.t.toLowerCase()+"</h2>"+last.m.map(function(m){return"<div class='m'><span>"+tm(m[0])+"</span><b>"+m[2][0]+" - "+m[2][1]+"</b><span>"+nm(m[1])+"</span></div>"}).join("")+"</div>"}
+else if(tab==2){if(!PO)h="<div class='c'><p class='help'>Los playoffs empiezan cuando termina la fecha 16. Pasan los 8 primeros de cada zona (A1 = primero de la zona A).</p></div>";
+else PO.forEach(function(r,i){h+="<div class='c'><h2>"+["⚔️ ","🔥 ","🏟️ ","🏆 "][i]+PO.names[i]+(i==3?" · cancha neutral":"")+"</h2><div class='pg'>"+r.map(mc).join("")+"</div></div>"})}
+else{var o=annual(),fin=champ[1]!=null,hh="<tr><th>#</th><th class='n'>Equipo</th><th>Apertura</th><th>Clausura</th><th>Total</th></tr>";
+o.forEach(function(i,k){var a=R[0]?R[0][i].pt:0,c=R[1]?R[1][i].pt:0;hh+="<tr class='"+(fin&&k==0?"q":fin&&k>=28?"d":"")+"'><td>"+(k+1)+"</td><td class='n'>"+tm(i)+"</td><td>"+a+"</td><td>"+c+"</td><td class='p'>"+(a+c)+"</td></tr>"});
+h="<div class='c'><h2>Tabla anual</h2><p class='lg' style='margin:0 0 6px'>Suma los puntos de las fases regulares. El 1° es Campeón de Liga (verde) y los dos últimos descienden (rojo).</p><div class='sc'><table>"+hh+"</table></div></div>"}
+return h}
+function chip(ic,l,v){return"<div class='tr'><span>"+ic+"</span><small>"+l+"</small><b>"+v+"</b></div>"}
+function banner(){var b="";
+if(champ[0]!=null)b+=chip("🏆","Campeón del Apertura",nm(champ[0]));
+if(champ[1]!=null){b+=chip("🏆","Campeón del Clausura",nm(champ[1]));
+if(troph&&troph.same!=null)b+=chip("🏅","Trofeo de Campeones",nm(troph.same));
+else if(troph)b+=chip("🏅","Trofeo de Campeones",nm(troph.w)+" <small style='display:inline'>("+troph.gh+"-"+troph.ga+(troph.pen?", pen.":"")+")</small>");
+var o=annual();b+=chip("🥇","Campeón de Liga",nm(o[0]))+chip("⬇️","Descienden (tabla anual)",nm(o[28])+", "+nm(o[29]))}
+return(b?"<div class='trs'>"+b+"</div>":"")+mover()}
+function draw(){sw();var nms=["Fase regular","Octavos","Cuartos","Semis","Final"],cur=stage=="reg"?0:stage=="po"?rd+1:5,E2=document.getElementById.bind(document);
+E2("hs").textContent=["Torneo Apertura","Torneo Clausura"][tour]+" "+YR+(stage=="end"?" · terminado":stage=="reg"?" · fecha "+fecha+" de 16 jugadas":" · playoffs");
+E2("stp").innerHTML=nms.map(function(x,i){return"<span class='st "+(i<cur?"dn":i==cur?"cu":"")+"'>"+(i<cur?"✓ ":"")+x+"</span>"}).join("");
+E2("ban").innerHTML=banner();
+var t="",tn=["📊 Tablas","","⚔️ Playoffs","📅 Tabla anual"];[0,2,3].forEach(function(i){t+="<button class='"+(tab==i?"on":"")+"' onclick='tab="+i+";draw()'>"+tn[i]+"</button>"});
+E2("tabs").innerHTML=t;E2("v").innerHTML=view();
+var b1=E2("b1"),hp=E2("help");
+if(stage=="reg"){b1.textContent=ONE?"▶ Jugar próximo partido":"▶ Jugar fecha "+(fecha+1)+" de 16";hp.textContent="En cada fecha juegan todos los equipos. Mirá cómo se mueve la tabla."+nxtL()}
+else if(stage=="po"){b1.textContent="▶ Jugar "+PO.names[rd].toLowerCase();hp.textContent="Los playoffs son a un solo partido: el que pierde queda afuera."}
+else if(tour==0){b1.textContent="Pasar al Clausura →";hp.textContent="El Apertura terminó. Ahora empieza el segundo torneo del año."}
+else{b1.textContent="🔄 Repetir esta temporada";hp.textContent="La Liga terminó. Abajo ves ascensos y descensos para pasar a la próxima temporada."}
+E2("b2").textContent="⏩ Simular todo el "+["Apertura","Clausura"][tour];E2("b2").disabled=stage=="end"}
+var YR=2026,ONE=0,GC=[],BM,FA,CP,CC,MODE=0,PS,pf,pr,PP,FXP,lastP,pres,tb2,RP,PE,psd,rkk,ZA,ZB,pn=["Final por el 1º ascenso","Reducido · 1ª fase","Reducido · cuartos","Reducido · semifinales","Reducido · final"];
+var PQ=[["All Boys",51,"Nueva Chicago",49],["Ferro",62,"Atlanta",61],["Dep. Madryn",57,"San Martín (T)",54],["Los Andes",53,"Temperley",60],["Colón",59,"Patronato",49],["Dep. Morón",58,"Almagro",52],["Mitre (SdE)",52,"Güemes",46],["Almirante Brown",56,"Tristán Suárez",61],["Ciudad de Bolívar",55,"Agropecuario",52],["Central Norte",50,"Gimnasia y Tiro",56],["Godoy Cruz",62,"Dep. Maipú",55],["San Telmo",49,"Quilmes",53],["Acassuso",47,"Midland",57],["Chaco For Ever",54,"Chacarita",49],["Estudiantes (BA)",55,"Colegiales",54],["Racing (Cba)",52,"Gimnasia (Jujuy)",58],["Def. de Belgrano",51,"Atl. Rafaela",52],["San Miguel",46,"San Martín (SJ)",53]];
+var PT=[];PQ.forEach(function(p,i){PT[i]={n:p[0],s:p[1]};PT[18+i]={n:p[2],s:p[3]}});
+var METRO=["All Boys","Ferro","Dep. Morón","Estudiantes (BA)","Almirante Brown","Acassuso","San Miguel","Def. de Belgrano","San Telmo","Nueva Chicago","Chacarita","Atlanta","Temperley","Tristán Suárez","Colegiales","Quilmes","Midland","Almagro","Los Andes"];PT.forEach(function(x){x.m=METRO.indexOf(x.n)>=0?1:0});
+function nxtL(){var F=FX[fecha],k=last&&last.f==fecha?last.m.length:0,m=F[k];return ONE&&m?" Próximo: "+nm(m[0])+" vs "+nm(m[1])+".":""}
+function nxtP(){var F=FXP[pf],k=lastP&&lastP.f==pf?lastP.m.length:0,m=F[k];return ONE&&m?" Próximo: "+nP(m[0])+" vs "+nP(m[1])+".":""}
+function nP(i){return PT[i].n}
+function tp(i){var h=0,t=PT[i].n;for(var k=0;k<t.length;k++)h=(h*31+t.charCodeAt(k))%360;return"<i class='bd' style='background:hsl("+h+",55%,48%)'></i>"+t}
+function cmpP(x,y){var a=RP[x],b=RP[y];return b.pt-a.pt||(b.gf-b.gc)-(a.gf-a.gc)||b.gf-a.gf||tb2[x]-tb2[y]}
+function zoneP(z){var o=[];for(var i=0;i<18;i++)o.push(z*18+i);return o.sort(cmpP)}
+function mkFixP(){var ida=[],r,k,f,z,b,m;for(r=0;r<17;r++){f=[];for(z=0;z<2;z++){b=z*18;f.push(r%2?[b+17,b+r]:[b+r,b+17]);for(k=1;k<=8;k++){var a=(r+k)%17,c=(r-k+17)%17;f.push(k%2?[b+a,b+c]:[b+c,b+a])}}ida.push(f)}
+var vue=ida.map(function(g){return g.map(function(m){return[m[1],m[0]]})}),it=[];for(var i=0;i<18;i++)it.push(i%2?[i,18+i]:[18+i,i]);var F=ida.concat(vue);F.splice(6,0,it);return F}
+function playP(h,a,neu){var d=(PE[h]-PE[a])/20;return[pois((neu?0.98:1.12)*Math.exp(d/2)),pois((neu?0.98:0.85)*Math.exp(-d/2))]}
+function kop(m,neu){var r=playP(m.h,m.a,neu);m.gh=r[0];m.ga=r[1];if(r[0]==r[1]){m.pen=1;m.w=Math.random()<0.5+(PE[m.h]-PE[m.a])/300?m.h:m.a}else m.w=r[0]>r[1]?m.h:m.a;m.l=m.w==m.h?m.a:m.h}
+function mk(x,y,K){return K[x]<=K[y]?{h:x,a:y}:{h:y,a:x}}
+function resetP(){RP=PT.map(function(){return{pj:0,g:0,e:0,p:0,gf:0,gc:0,pt:0}});R[2]=RP;tb2=PT.map(Math.random);PE=PT.map(function(x){return x.s+(Math.random()+Math.random()+Math.random()-1.5)*5});FXP=mkFixP();PS="reg";pf=0;pr=0;PP=null;lastP=null;pres=null;tab=0;drawP()}
+function stepP(){
+if(PS=="reg"){var F=FXP[pf];if(!lastP||lastP.f!=pf)lastP={t:"Fecha "+(pf+1)+(pf==6?" (interzonal)":""),f:pf,m:[]};var n=ONE?1:F.length-lastP.m.length;while(n--&&lastP.m.length<F.length){var m=F[lastP.m.length],r=playP(m[0],m[1]);rec(2,m[0],m[1],r[0],r[1]);lastP.m.push([m[0],m[1],r])}if(lastP.m.length>=F.length)pf++;
+if(pf>=35){ZA=zoneP(0);ZB=zoneP(1);psd={};ZA.forEach(function(id,k){psd[id]=k});ZB.forEach(function(id,k){psd[id]=k+.5});PP=[[{h:ZA[0],a:ZB[0]}]];PS="po";pr=0;tab=2}return}
+var rd=PP[pr],td=rd.filter(function(m){return m.w==null});(ONE?td.slice(0,1):td).forEach(function(m){kop(m,pr==0||pr==4)});if(rd.some(function(m){return m.w==null}))return;var w=rd.map(function(m){return m.w});
+if(pr==0){pres={first:w[0],loser:rd[0].l};var A=ZA,B=ZB,K=psd;PP.push([mk(A[1],B[7],K),mk(B[1],A[7],K),mk(A[2],B[6],K),mk(B[2],A[6],K),mk(A[3],B[5],K),mk(B[3],A[5],K),mk(A[4],B[4],K)])}
+else if(pr==1){var t=w.concat([pres.loser]).sort(cmpP);rkk={};t.forEach(function(id,k){rkk[id]=k});PP.push([mk(t[0],t[7],rkk),mk(t[3],t[4],rkk),mk(t[1],t[6],rkk),mk(t[2],t[5],rkk)])}
+else if(pr==2||pr==3){var n=[];for(var i=0;i<w.length;i+=2)n.push(mk(w[i],w[i+1],rkk));PP.push(n)}
+else{pres.second=w[0];PS="end";return}
+pr++}
+function ztP(z){var o=zoneP(z),h="<tr><th>#</th><th class='n'>Equipo</th><th>PJ</th><th class='hm'>G</th><th class='hm'>E</th><th class='hm'>P</th><th class='hm'>DG</th><th>Pts</th></tr>";
+o.forEach(function(i,k){var s=RP[i];h+="<tr class='"+(k==0?"q":k<8?"rd":k>=16?"d":"")+(k==7?" cut":"")+"'><td>"+(k+1)+"</td><td class='n'>"+tp(i)+"</td><td>"+s.pj+"</td><td class='hm'>"+s.g+"</td><td class='hm'>"+s.e+"</td><td class='hm'>"+s.p+"</td><td class='hm'>"+(s.gf-s.gc)+"</td><td class='p'>"+s.pt+"</td></tr>"});
+return"<div class='c'><h2>Zona "+(z?"B":"A")+"</h2><div class='sc'><table>"+h+"</table></div><div class='lg'>🟩 1º: final por el ascenso · 🟦 2º al 8º: Reducido · 🟥 últimos 2: descienden</div></div>"}
+function mcP(m){var pl=m.w!=null;function row(t,g){return"<div class='r"+(pl&&m.w==t?" w":"")+"'><span>"+tp(t)+"</span><b>"+(pl?g:"")+"</b></div>"}return"<div class='mc'>"+row(m.h,m.gh)+row(m.a,m.ga)+(m.pen?"<div class='pn'>Definido por penales</div>":"")+"</div>"}
+function viewP(){var h="";
+if(tab==0){h="<div class='g'>"+ztP(0)+ztP(1)+"</div>";if(lastP)h+="<div class='c' style='margin-top:12px'><h2>Resultados de la "+lastP.t.toLowerCase()+"</h2><div class='pg'>"+lastP.m.map(function(m){return"<div class='m'><span>"+tp(m[0])+"</span><b>"+m[2][0]+" - "+m[2][1]+"</b><span>"+nP(m[1])+"</span></div>"}).join("")+"</div></div>"}
+else if(!PP)h="<div class='c'><p class='help'>Los playoffs empiezan cuando terminan las 35 fechas: final entre los campeones de zona y Reducido del 2º al 8º.</p></div>";
+else PP.forEach(function(r,i){h+="<div class='c'><h2>"+["🏆 ","⚔️ ","🔥 ","🏟️ ","🥈 "][i]+pn[i]+(i==0||i==4?" · cancha neutral":"")+"</h2><div class='pg'>"+r.map(mcP).join("")+"</div></div>"});
+return h}
+function bannerP(){var x=mover();if(PS!="end")return x;var d=zoneP(0).slice(16).concat(zoneP(1).slice(16)).map(nP).join(", ");
+return"<div class='trs'>"+chip("🥇","Campeón y 1º ascenso",nP(pres.first))+chip("⬆️","2º ascenso (Reducido)",nP(pres.second))+chip("⬇️","Descienden a B Metro / Federal A",d)+"</div>"+x}
+function drawP(){sw();var E2=document.getElementById.bind(document),nms=["Fase regular","Final 1º ascenso","Reducido","Cuartos","Semis","Final"],cur=PS=="reg"?0:PS=="po"?pr+1:6;
+E2("hs").textContent="Primera Nacional "+YR+(PS=="end"?" · terminado":PS=="reg"?" · fecha "+pf+" de 35 jugadas":" · definición del ascenso");
+E2("stp").innerHTML=nms.map(function(x,i){return"<span class='st "+(i<cur?"dn":i==cur?"cu":"")+"'>"+(i<cur?"✓ ":"")+x+"</span>"}).join("");
+E2("ban").innerHTML=bannerP();
+E2("tabs").innerHTML=[[0,"📊 Tablas"],[2,"⚔️ Ascenso"]].map(function(x){return"<button class='"+(tab==x[0]?"on":"")+"' onclick='tab="+x[0]+";drawP()'>"+x[1]+"</button>"}).join("");
+E2("v").innerHTML=viewP();
+var b1=E2("b1"),hp=E2("help");
+if(PS=="reg"){b1.textContent=ONE?"▶ Jugar próximo partido":"▶ Jugar fecha "+(pf+1)+" de 35";hp.textContent="Dos zonas de 18. La fecha 7 es interzonal. Mirá la pelea por el 1º lugar, el Reducido y el descenso."+nxtP()}
+else if(PS=="po"){b1.textContent="▶ Jugar: "+pn[pr].toLowerCase();hp.textContent="Partido único: el que pierde queda afuera (la final del Reducido es en cancha neutral)."}
+else{b1.textContent="🔄 Repetir esta temporada";hp.textContent="Terminó la Primera Nacional. Mirá ascensos y descensos para pasar a la próxima temporada."}
+E2("b2").textContent="⏩ Simular toda la Primera Nacional";E2("b2").disabled=PS=="end"}
+var BT=[["Excursionistas",52],["Arsenal",51],["Sportivo Italiano",49.5],["Dep. Laferrere",49],["Talleres (RE)",48.5],["Comunicaciones",47],["Defensores Unidos",47],["Brown (Adrogué)",47],["Liniers",46],["Villa Dálmine",46],["Camioneros",46],["Dep. Merlo",45.5],["Ituzaingó",45.5],["Flandria",45],["Villa San Carlos",45],["UAI Urquiza",45],["Real Pilar",45],["Argentino (Quilmes)",44.5],["San Martín (Burzaco)",44],["Argentino (Merlo)",44],["Dock Sud",44],["Dep. Armenio",43.5]].map(function(x){return{n:x[0],s:x[1]}});
+var FZ=[[["Douglas Haig",31],["Sportivo Belgrano",30],["Gimnasia (Chivilcoy)",27],["Def. de Belgrano (VR)",27],["9 de Julio (Rafaela)",25],["Sportivo Las Parejas",24],["Atlético Escobar",22],["Independiente (Chivilcoy)",19],["El Linqueño",19],["Gimnasia (C. del Uruguay)",17]],[["San Martín (Formosa)",30],["Bartolomé Mitre",26],["Sol de América",26],["Sarmiento (La Banda)",25],["Juventud Antoniana",25],["Defensores de Vilelas",19],["Boca Unidos",18],["Tucumán Central",17],["Sarmiento (Resistencia)",15]],[["Cipolletti",25],["Argentino (Monte Maíz)",23],["Atenas (RC)",23],["Huracán Las Heras",23],["FADEP",21],["Deportivo Rincón",19],["San Martín (Mendoza)",19],["Costa Brava",18],["Juventud Unida Univ.",17]],[["Olimpo",31],["Alvarado",27],["Kimberley",26],["Villa Mitre",23],["Germinal",18],["Sol de Mayo",18],["Guillermo Brown",17],["Santamarina",13],["Círculo Deportivo",13]]];
+var FT=[],FZi=[];FZ.forEach(function(z,i){var g=i?16:18;FZi.push([]);z.forEach(function(x){FZi[i].push(FT.length);FT.push({n:x[0],s:Math.round((36+8*x[1]/g)*10)/10})})});
+function bg(n){var c=C[n];if(c)return"<i class='bd' style='background:linear-gradient(135deg,"+c[0]+" 50%,"+c[1]+" 50%)'></i>"+n;var h=0;for(var k=0;k<n.length;k++)h=(h*31+n.charCodeAt(k))%360;return"<i class='bd' style='background:hsl("+h+",55%,48%)'></i>"+n}
+function gn(K,i){return K.T[i].n}
+function mkR(nm,ph,ms,ko,neu){return{nm:nm,ph:ph,ms:ms.map(function(m){return{h:m[0],a:m[1]}}),ko:ko,neu:neu}}
+function mkRR(ids){var a=ids.slice(),n,r,k,f,o=[];if(a.length%2)a.push(null);n=a.length;for(r=0;r<n-1;r++){f=[];for(k=0;k<n/2;k++){var x=a[k],y=a[n-1-k];if(x!=null&&y!=null)f.push((r+k)%2?[x,y]:[y,x])}o.push(f);a.splice(1,0,a.pop())}return o}
+function dbl(R){return R.concat(R.map(function(f){return f.map(function(m){return[m[1],m[0]]})}))}
+function mkK(id,nm,T,sc,fh,fa,phs){var K={id:id,nm:nm,T:T,sc:sc,fh:fh,fa:fa,phs:phs,rounds:[],ri:0,done:0,tabs:[],S:null,res:{},dn:[],leg:""};K.E=T.map(function(x){return x.s+(Math.random()+Math.random()+Math.random()-1.5)*4});K.tb=T.map(Math.random);K.tp=T.map(function(){return 0});K.tn=T.map(function(){return 0});return K}
+function newS(K){K.S=K.T.map(function(){return{pj:0,g:0,e:0,p:0,gf:0,gc:0,pt:0}})}
+function recS(K,h,a,x,y){var H=K.S[h],A=K.S[a],ph=x>y?3:x==y?1:0,pa=y>x?3:x==y?1:0;H.pj++;A.pj++;H.gf+=x;H.gc+=y;A.gf+=y;A.gc+=x;H.pt+=ph;A.pt+=pa;if(x>y){H.g++;A.p++}else if(x<y){A.g++;H.p++}else{H.e++;A.e++}K.tp[h]+=ph;K.tp[a]+=pa;K.tn[h]++;K.tn[a]++}
+function ord(K,ids){return ids.slice().sort(function(x,y){var a=K.S[x],b=K.S[y];return b.pt-a.pt||(b.gf-b.gc)-(a.gf-a.gc)||b.gf-a.gf||K.tb[x]-K.tb[y]})}
+function pm(K,m,ko,neu){var d=(K.E[m.h]-K.E[m.a])/K.sc,x=pois((neu?1:K.fh)*Math.exp(d/2)),y=pois((neu?1:K.fa)*Math.exp(-d/2));m.gh=x;m.ga=y;
+if(ko){if(x==y){m.pen=1;m.w=Math.random()<.5+(K.E[m.h]-K.E[m.a])/300?m.h:m.a}else m.w=x>y?m.h:m.a;m.l=m.w==m.h?m.a:m.h}else{m.w=-1;recS(K,m.h,m.a,x,y)}}
+function adv(K){var R=K.rounds[K.ri];if(R.ms.every(function(m){return m.w!=null})){var nx=K.gen(R);if(nx){K.rounds.push(nx);K.ri++}else K.done=1}}
+function gstep(K,one){if(K.done)return;var R=K.rounds[K.ri],td=R.ms.filter(function(m){return m.w==null});(one?td.slice(0,1):td).forEach(function(m){pm(K,m,R.ko,R.neu)});adv(K)}
+function gp(i,ri,mi){var K=GC[i],R=K.rounds[ri],m=R.ms[mi];if(!m||m.w!=null)return;pm(K,m,R.ko,R.neu);adv(K);drawG(K)}
+var KN={1:"Final",2:"Semifinales",4:"Cuartos",8:"Octavos",16:"16avos",32:"32avos"};
+function bm(K,x,y){var s=K.sd;return!s||s[x]<=s[y]?[x,y]:[y,x]}
+function kon(K,R,ph){var w=R.ms.map(function(m){return m.w}),p=[],i;for(i=0;i<w.length;i+=2)p.push(bm(K,w[i],w[i+1]));return mkR(KN[p.length],ph,p,1,p.length==1)}
+function mkB(){var ids=BT.map(function(_,i){return i}),K=mkK("B","Primera B Metropolitana",BT,20,1.05,.8,["Fase regular","Reducido","Final"]),RR=dbl(mkRR(ids)),n=0;newS(K);
+K.tabs=[{t:"Tabla única",ids:ids,cl:function(k,l){return k==0?"q":k<9?"rd":k>=l-2?"d":""}}];K.leg="🟩 Campeón: asciende directo · 🟦 2º al 9º: Reducido por el 2º ascenso · 🟥 últimos 2: descienden a Primera C";
+K.gen=function(R){if(!R||R.ph==0){if(n<RR.length)return mkR("Fecha "+(n+1),0,RR[n++]);var o=ord(K,ids),q=o.slice(1,9);K.res.first=o[0];K.dn=o.slice(-2);K.sd={};q.forEach(function(id,k){K.sd[id]=k});return mkR("Reducido · cuartos",1,[[q[0],q[7]],[q[3],q[4]],[q[1],q[6]],[q[2],q[5]]],1,0)}
+if(R.ms.length==1){K.res.second=R.ms[0].w;return null}return kon(K,R,R.ms.length==2?2:1)};
+K.ban=function(){return chip("🥇","Campeón y ascenso",gn(K,K.res.first))+chip("⬆️","2º ascenso (Reducido)",gn(K,K.res.second))+chip("⬇️","Descienden a Primera C",K.dn.map(function(i){return gn(K,i)}).join(", "))};
+K.rounds=[K.gen(null)];return K}
+function mkF(){var z=FZi,Z=z.map(function(ids){return dbl(mkRR(ids))}),K=mkK("F","Federal A",FT,20,1.05,.8,["1ª fase","Campeonato y Reválida","Playoffs","Reducido 2º ascenso"]),n=0,m=0,Z2,CA,CB,RA,RB;newS(K);
+K.tabs=z.map(function(ids,i){return{t:"Zona "+(i+1),ids:ids,cl:function(k){return k<(i?4:5)?"q":""}}});K.leg="🟩 Clasifican a la Zona Campeonato (5 de la zona de 10, 4 de cada zona de 9 y el mejor 5º) · el resto juega la Reválida";
+function f2(i){return[].concat(Z2[0][i],Z2[1][i],Z2[2][i],Z2[3][i])}
+K.gen=function(R){var i,o,b5;
+if(!R||R.ph==0){if(n<18){i=n++;return mkR("Fecha "+(i+1),0,[].concat(Z[0][i],Z[1][i],Z[2][i],Z[3][i]))}
+o=z.map(function(ids){return ord(K,ids)});b5=[o[1][4],o[2][4],o[3][4]].sort(function(x,y){var a=K.S[x],b=K.S[y];return b.pt-a.pt||(b.gf-b.gc)-(a.gf-a.gc)})[0];
+CA=o[0].slice(0,5).concat(o[1].slice(0,4));CB=o[2].slice(0,4).concat(o[3].slice(0,4),[b5]);
+var rest=K.T.map(function(_,j){return j}).filter(function(j){return CA.indexOf(j)<0&&CB.indexOf(j)<0});RA=rest.filter(function(j){return j<19});RB=rest.filter(function(j){return j>=19});
+Z2=[CA,CB,RA,RB].map(mkRR);newS(K);var rv=function(k,l){return k<6?"rd":k>=l-2?"d":""},cz=function(k){return k<4?"q":""};
+K.tabs=[{t:"Zona Campeonato A",ids:CA,cl:cz},{t:"Zona Campeonato B",ids:CB,cl:cz},{t:"Reválida A",ids:RA,cl:rv},{t:"Reválida B",ids:RB,cl:rv}];
+K.leg="🟩 Los 4 primeros de cada Zona Campeonato juegan los playoffs · 🟦 Reválida: los 6 mejores van al Reducido · 🟥 los 2 últimos de cada Reválida descienden (por promedio de puntos)";
+i=m++;return mkR("Fecha "+(19+i),1,f2(i))}
+if(R.ph==1){if(m<9){i=m++;return mkR("Fecha "+(19+i),1,f2(i))}
+var oa=ord(K,CA),ob=ord(K,CB),ra=ord(K,RA),rb=ord(K,RB);K.sd={};oa.forEach(function(id,k){K.sd[id]=k});ob.forEach(function(id,k){K.sd[id]=k+.5});
+var av=function(ids){return ids.slice().sort(function(x,y){return K.tp[x]/K.tn[x]-K.tp[y]/K.tn[y]}).slice(0,2)};K.dn=av(RA).concat(av(RB));
+K.rv=[];for(i=0;i<6;i++){K.rv.push(ra[i]);K.rv.push(rb[i])}
+return mkR("Playoffs · cuartos",2,[[oa[0],ob[3]],[oa[1],ob[2]],[oa[2],ob[1]],[oa[3],ob[0]]].map(function(p){return bm(K,p[0],p[1])}),1,0)}
+if(R.ph==2){if(R.ms.length==4)K.ql=R.ms.map(function(x){return x.l});
+if(R.ms.length==1){K.res.first=R.ms[0].w;var s=K.ql.concat(K.rv),p=[];K.sd={};s.forEach(function(id,k){K.sd[id]=k});for(i=0;i<8;i++)p.push([s[i],s[15-i]]);return mkR("Reducido · octavos",3,p,1,0)}
+return kon(K,R,2)}
+if(R.ms.length==1){K.res.second=R.ms[0].w;return null}return kon(K,R,3)};
+K.ban=function(){return chip("🥇","Campeón y 1º ascenso",gn(K,K.res.first))+chip("⬆️","2º ascenso (Reducido)",gn(K,K.res.second))+chip("⬇️","Descienden al Regional",K.dn.map(function(i){return gn(K,i)}).join(", "))};
+K.rounds=[K.gen(null)];return K}
+var CZ=[[["Berazategui",43],["Sacachispas",41.5],["Lugano",41.5],["Estrella del Sur",41],["Victoriano Arenas",40.5],["Centro Español",40],["Mercedes",39.5],["Def. de Cambaceres",39.5],["Puerto Nuevo",38.5],["Juventud Unida (SM)",38.5],["Leandro N. Alem",38],["Justo J. de Urquiza",37],["Dep. Paraguayo",35.5],["Argentino (Rosario)",35]],[["Luján",43],["Cañuelas",41],["Dep. Español",40.5],["Lamadrid",40.5],["Sportivo Barracas",40],["Central Ballester",40],["Yupanqui",39.5],["Leones (Rosario)",39],["Central Córdoba (R)",39],["Fénix",38],["Claypole",38],["El Porvenir",37.5],["Dep. Muñiz",36.5],["Atlas",36]]];
+var CT=CZ[0].concat(CZ[1]).map(function(x){return{n:x[0],s:x[1]}});
+function mkP(){var A=[],B=[],i,K,ZA,ZB,F=[],it=[],n=0,cl=function(k,l){return k==0?"q":k<7?"rd":k==l-1?"d":""};for(i=0;i<14;i++){A.push(i);B.push(14+i)}
+K=mkK("P","Primera C",CT.concat([{n:"Campeón Promocional Amateur",s:36}]),18,1,.78,["Fase regular","Final 1º ascenso","Reducido","Descenso"]);newS(K);
+ZA=dbl(mkRR(A));ZB=dbl(mkRR(B));for(i=0;i<14;i++)it.push(i%2?[A[i],B[i]]:[B[i],A[i]]);for(i=0;i<26;i++)F.push([].concat(ZA[i],ZB[i]));F.splice(6,0,it);
+K.tabs=[{t:"Zona A",ids:A,cl:cl},{t:"Zona B",ids:B,cl:cl}];K.leg="🟩 1º de cada zona: final por el 1º ascenso · 🟦 2º al 7º: Reducido por el 2º ascenso · 🟥 último de cada zona: juega por la desafiliación y la promoción";
+K.gen=function(R){var i,a,b,m,e;
+if(!R||R.ph==0){if(n<27){i=n++;return mkR("Fecha "+(i+1)+(i==6?" (interzonal)":""),0,F[i])}
+K.za=ord(K,A);K.zb=ord(K,B);return mkR("Final por el 1º ascenso",1,[[K.za[0],K.zb[0]]],1,1)}
+a=K.za;b=K.zb;
+if(R.ph==1){m=R.ms[0];K.res.first=m.w;K.L=m.l;K.sd={};a.forEach(function(id,k){K.sd[id]=k});b.forEach(function(id,k){K.sd[id]=k+.5});
+return mkR("Reducido · 1ª fase",2,[[a[1],b[6]],[b[1],a[6]],[a[2],b[5]],[b[2],a[5]],[a[3],b[4]],[b[3],a[4]]].map(function(p){return bm(K,p[0],p[1])}),1,0)}
+if(R.ph==2){if(R.nm=="Reducido · 1ª fase"){var w=R.ms.map(function(x){return x.w}),bl=ord(K,R.ms.map(function(x){return x.l}))[0];e=[K.L].concat(ord(K,w.concat([bl])));K.sd={};e.forEach(function(id,k){K.sd[id]=k});
+return mkR("Reducido · cuartos",2,[[e[0],e[7]],[e[3],e[4]],[e[1],e[6]],[e[2],e[5]]].map(function(p){return bm(K,p[0],p[1])}),1,0)}
+if(R.ms.length==1){K.res.second=R.ms[0].w;return mkR("Desafiliación",3,[[a[13],b[13]]],1,1)}return kon(K,R,2)}
+m=R.ms[0];if(R.nm=="Desafiliación"){K.dn=[m.l];return mkR("Promoción",3,[[m.w,28]],1,0)}if(m.w==28)K.dn.push(m.l);return null};
+K.ban=function(){return chip("🥇","Campeón y 1º ascenso",gn(K,K.res.first))+chip("⬆️","2º ascenso (Reducido)",gn(K,K.res.second))+chip("⬇️","Pierden la categoría",K.dn.map(function(i){return gn(K,i)}).join(", "))};
+K.rounds=[K.gen(null)];return K}
+function mkC(){var tm=[],pk=function(a,n,t){a.slice().sort(function(x,y){return y.s-x.s||Math.random()-.5}).slice(0,n).forEach(function(x){tm.push({n:x.n,s:x.s,t:t})})};
+T.forEach(function(x){tm.push({n:x.n,s:x.s,t:"LPF"})});pk(PT,16,"PN");pk(BT,8,"B");pk(FT,10,"FA");
+var K=mkK("C","Copa Argentina",tm,25,1,1,["32avos","16avos","Octavos","Cuartos","Semis","Final"]);
+K.gen=function(R){if(!R){var id=tm.map(function(_,i){return i}).sort(function(){return Math.random()-.5}),p=[];for(var i=0;i<64;i+=2)p.push([id[i],id[i+1]]);return mkR("32avos",0,p,1,1)}
+if(R.ms.length==1){K.res.first=R.ms[0].w;return null}var r=kon(K,R,R.ph+1);r.neu=1;return r};
+K.ban=function(){return chip("🏅","Campeón de la Copa Argentina",gn(K,K.res.first))};K.rounds=[K.gen(null)];return K}
+function mrow(K,m,ri,mi){var pl=m.w!=null,mid=pl?m.gh+" - "+m.ga+(m.pen?" (pen.)":""):(ONE?"<button onclick='gp("+GC.indexOf(K)+","+ri+","+mi+")'>▶</button>":"vs");return"<div class='m'><span"+(pl&&m.w==m.h?" class='w2'":"")+">"+bg(gn(K,m.h))+"</span><b>"+mid+"</b><span"+(pl&&m.w==m.a?" class='w2'":"")+">"+gn(K,m.a)+"</span></div>"}
+function mcG(K,m,ri,mi){var pl=m.w!=null;function row(t,g){return"<div class='r"+(pl&&m.w==t?" w":"")+"'><span>"+bg(gn(K,t))+"</span><b>"+(pl?g:"")+"</b></div>"}return"<div class='mc'>"+row(m.h,m.gh)+row(m.a,m.ga)+(m.pen?"<div class='pn'>Definido por penales</div>":"")+(!pl&&ONE?"<div class='pn'><button onclick='gp("+GC.indexOf(K)+","+ri+","+mi+")'>▶ Jugar este partido</button></div>":"")+"</div>"}
+function ztG(K,tb){var o=ord(K,tb.ids),h="<tr><th>#</th><th class='n'>Equipo</th><th>PJ</th><th class='hm'>G</th><th class='hm'>E</th><th class='hm'>P</th><th class='hm'>DG</th><th>Pts</th></tr>";
+o.forEach(function(i,k){var s=K.S[i];h+="<tr class='"+(tb.cl(k,o.length)||"")+"'><td>"+(k+1)+"</td><td class='n'>"+bg(gn(K,i))+"</td><td>"+s.pj+"</td><td class='hm'>"+s.g+"</td><td class='hm'>"+s.e+"</td><td class='hm'>"+s.p+"</td><td class='hm'>"+(s.gf-s.gc)+"</td><td class='p'>"+s.pt+"</td></tr>"});
+return"<div class='c'><h2>"+tb.t+"</h2><div class='sc'><table>"+h+"</table></div></div>"}
+function viewG(K){var h="",R=K.rounds[K.ri],i;
+if(tab==0&&K.tabs.length){h="<div class='g'>"+K.tabs.map(function(t){return ztG(K,t)}).join("")+"</div><p class='lg' style='margin:6px 2px 12px'>"+K.leg+"</p>";
+if(!K.done&&!R.ko)h+="<div class='c'><h2>▶ "+R.nm+"</h2>"+R.ms.map(function(m,mi){return mrow(K,m,K.ri,mi)}).join("")+"</div>";
+var pv=K.rounds[K.ri-1];if(pv&&!pv.ko)h+="<div class='c'><h2>Resultados · "+pv.nm+"</h2>"+pv.ms.map(function(m,mi){return mrow(K,m,K.ri-1,mi)}).join("")+"</div>";
+if(!K.done&&R.ko)h+="<div class='c'><p class='help'>Ya empezaron los playoffs: mirá la pestaña Llaves.</p></div>"}
+else{K.rounds.forEach(function(r,ri){if(r.ko)h+="<div class='c'><h2>"+(ri==K.ri&&!K.done?"▶ ":"")+r.nm+(r.neu?" · cancha neutral":"")+"</h2><div class='pg'>"+r.ms.map(function(m,mi){return mcG(K,m,ri,mi)}).join("")+"</div></div>"});
+if(!h)h="<div class='c'><p class='help'>Todavía no empezaron las llaves. Se juegan al terminar la fase regular.</p></div>"}
+return h}
+function drawG(K){sw();var E2=document.getElementById.bind(document),R=K.rounds[K.ri],cur=K.done?K.phs.length:R.ph;
+E2("hs").textContent=K.nm+" "+YR+(K.done?" · terminado":" · "+R.nm);
+E2("stp").innerHTML=K.phs.map(function(x,i){return"<span class='st "+(i<cur?"dn":i==cur?"cu":"")+"'>"+(i<cur?"✓ ":"")+x+"</span>"}).join("");
+E2("ban").innerHTML=(K.done?K.ban():"")+mover();
+E2("tabs").innerHTML=(K.tabs.length?[[0,"📊 Tablas"],[1,"⚔️ Llaves"]]:[[1,"⚔️ Llaves"]]).map(function(x){return"<button class='"+(tab==x[0]?"on":"")+"' onclick='tab="+x[0]+";drawG(GC["+GC.indexOf(K)+"])'>"+x[1]+"</button>"}).join("");
+E2("v").innerHTML=viewG(K);
+var b1=E2("b1"),hp=E2("help");
+if(K.done){b1.textContent="🔄 Repetir esta temporada";hp.textContent="Terminó. Mirá abajo ascensos y descensos."}
+else{b1.textContent=ONE?"▶ Jugar próximo partido":"▶ Jugar: "+R.nm.toLowerCase();var pn=R.ms.filter(function(m){return m.w==null})[0];hp.textContent=(R.ko?"Partido único: el que pierde queda eliminado. ":"")+(ONE&&pn?"Próximo: "+gn(K,pn.h)+" vs "+gn(K,pn.a)+". También podés tocar ▶ en cualquier partido.":"")}
+E2("b2").textContent="⏩ Simular toda la competencia";E2("b2").disabled=!!K.done}
+function mover(){var okL=champ[1]!=null,okP=PS=="end",okB=BM&&BM.done,okF=FA&&FA.done,okC=CC&&CC.done;if(!okL&&!okP&&!okB&&!okF&&!okC)return"";
+var o=okL?annual():null,ok=okL&&okP&&okB&&okF&&okC,w="<i>falta terminar</i>",nn=function(K,a){return a.map(function(i){return"<b>"+gn(K,i)+"</b>"}).join(", ")},PTK={T:PT};
+var pdn=okP?zoneP(0).slice(16).concat(zoneP(1).slice(16)):[];
+return"<div class='c'><h2>🔁 Ascensos y descensos "+YR+"</h2><p class='lg' style='margin:0 0 8px;line-height:1.8'>🏆 Liga · desciende: "+(okL?"<b>"+nm(o[28])+"</b>, <b>"+nm(o[29])+"</b>":w)+"<br>🥈 Primera Nacional · asciende: "+(okP?nn(PTK,[pres.first,pres.second]):w)+" · desciende: "+(okP?nn(PTK,pdn):w)+"<br>🥉 B Metro · asciende: "+(okB?nn(BM,[BM.res.first,BM.res.second]):w)+" · desciende: "+(okB?nn(BM,BM.dn):w)+"<br>🌎 Federal A · asciende: "+(okF?nn(FA,[FA.res.first,FA.res.second]):w)+" · desciende: "+(okF?nn(FA,FA.dn):w)+"<br>🔰 Primera C · asciende: "+(okC?nn(CC,[CC.res.first,CC.res.second]):w)+" · pierde la categoría: "+(okC?nn(CC,CC.dn):w)+"</p><button class='big' "+(ok?"onclick='nextSeason()'":"disabled")+">⏭ Pasar a la temporada "+(YR+1)+"</button></div>"}
+function nextSeason(){var o=annual(),dn=[o[28],o[29]],up=[pres.first,pres.second],pd=zoneP(0).slice(16).concat(zoneP(1).slice(16));
+var L=dn.map(function(i){return T[i]}),P=up.map(function(i){return PT[i]}),PD=pd.map(function(i){return PT[i]});
+var bU=[BM.res.first,BM.res.second].map(function(i){return BT[i]}),bFree=[BM.res.first,BM.res.second].concat(BM.dn),fU=[FA.res.first,FA.res.second].map(function(i){return FT[i]}),fFree=[FA.res.first,FA.res.second].concat(FA.dn),cFree=[CC.res.first,CC.res.second].concat(CC.dn),cU=[CC.res.first,CC.res.second].map(function(i){return CT[i]});
+var cl=function(v,a,b){return Math.max(a,Math.min(b,Math.round(v)))};
+[0,1].forEach(function(k){T[dn[k]]={n:P[k].n,s:cl(54+(P[k].s-48)*.5,54,66)};PT[up[k]]={n:L[k].n,s:cl(38+.35*L[k].s,50,64),m:1}});
+var inc=bU.map(function(t){return{n:t.n,s:cl(46+(t.s-42)*.8,46,58),m:1}}).concat(fU.map(function(t){return{n:t.n,s:cl(45+(t.s-40)*.7,45,56),m:0}}));
+pd.forEach(function(id,k){PT[id]=inc[k]});
+var bIn=[],fIn=[],mt=[],it=[],c=0;PD.forEach(function(t){(t.m?mt:it).push(t)});
+mt.slice(0,2).forEach(function(t){bIn.push({n:t.n,s:cl(40+(t.s-46)*.6,42,50)})});cU.forEach(function(t){bIn.push({n:t.n,s:cl(43+(t.s-38)*.6,42,48)})});
+mt.slice(2).concat(it).forEach(function(t){fIn.push({n:t.n,s:cl(38+(t.s-46)*.5,38,48)})});
+while(bIn.length<4)bIn.push({n:"Ascendido Primera C "+(++c)+" "+YR,s:42});c=0;while(fIn.length<6)fIn.push({n:"Ascendido Regional "+(++c)+" "+YR,s:40});
+var cIn=BM.dn.map(function(i){return{n:BT[i].n,s:cl(38+(BT[i].s-44)*.7,34,44)}});c=0;while(cIn.length<cFree.length)cIn.push({n:"Ascendido Amateur "+(++c)+" "+YR,s:36});
+bFree.forEach(function(id,k){BT[id]=bIn[k]});fFree.forEach(function(id,k){FT[id]=fIn[k]});cFree.forEach(function(id,k){CT[id]=cIn[k]});
+YR++;reset();resetP();BM=mkB();FA=mkF();CC=mkP();CP=mkC();GC=[0,0,BM,FA,CP,CC];redraw()}
+function redraw(){MODE==0?draw():MODE==1?drawP():drawG(GC[MODE])}
+function sw(){document.getElementById("ht").textContent="Fútbol argentino "+YR;document.getElementById("b5").textContent="🎯 Partido a partido: "+(ONE?"SÍ":"NO");
+document.getElementById("sw").innerHTML=["🏆 Liga","🥈 Primera Nacional","🥉 B Metro","🌎 Federal A","🏅 Copa Argentina","🔰 Primera C"].map(function(x,i){return"<button class='"+(MODE==i?"on":"")+"' onclick='setM("+i+")'>"+x+"</button>"}).join("")}
+function setM(m){MODE=m;tab=m==4?1:0;if(m==1){RP?drawP():resetP()}else if(m>=2)drawG(GC[m]);else draw()}
+function rstG(m){if(m==2)BM=mkB();else if(m==3)FA=mkF();else if(m==4)CP=mkC();else CC=mkP();GC=[0,0,BM,FA,CP,CC];tab=m==4?1:0;drawG(GC[m])}
+document.getElementById("b1").onclick=function(){if(MODE>=2){var K=GC[MODE];if(K.done)rstG(MODE);else{gstep(K,ONE);drawG(K)}return}if(MODE==1){if(PS=="end")resetP();else{stepP();drawP()}return}if(stage=="end"){if(tour==0)startTour(1);else{reset();return}}else step();draw()};
+document.getElementById("b2").onclick=function(){if(MODE>=2){var K=GC[MODE];while(!K.done)gstep(K,0);drawG(K);return}if(MODE==1){while(PS!="end")stepP();drawP();return}var t=tour;while(stage!="end"&&tour==t)step();draw()};
+document.getElementById("b4").onclick=function(){MODE>=2?rstG(MODE):MODE==1?resetP():reset()};
+document.getElementById("b5").onclick=function(){ONE=!ONE;redraw()};
+reset();BM=mkB();FA=mkF();CC=mkP();CP=mkC();GC=[0,0,BM,FA,CP,CC];sw();
+</script>
+<script>
+(function(){
+
+const $=id=>document.getElementById('e-'+id);
+const K=['pl','ch','l1','l2','nl','nln','nls','npl','isth','slc','sls'],KS=['esp','seg','pf1','pf2','sr1','sr2','sr3','sr4','sr5'];
+const C={
+pl:{n:'Premier League',g:4,b:[0,0],r:3,dir:0,l1:'Champions League (top 4)',l2:'',up:'',dn:'la Championship'},
+ch:{n:'Championship',g:2,b:[2,8],r:3,dir:2,po:[2,6],l1:'Ascenso directo (1º y 2º)',l2:'Playoffs (3º a 8º): el ganador asciende',up:'la Premier League',dn:'League One'},
+l1:{n:'League One',g:2,b:[2,6],r:4,dir:2,po:[2,4],l1:'Ascenso directo (1º y 2º)',l2:'Playoffs (3º a 6º): el ganador asciende',up:'la Championship',dn:'League Two'},
+l2:{n:'League Two',g:3,b:[3,7],r:2,dir:3,po:[3,4],l1:'Ascenso directo (1º a 3º)',l2:'Playoffs (4º a 7º): el ganador asciende',up:'League One',dn:'la National League'},
+nl:{n:'National League',g:1,b:[1,7],r:4,dir:1,po:[1,6],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 7º): el ganador asciende',up:'League Two',dn:'la National League Norte/Sur'},
+nln:{n:'Nat. League North',g:1,b:[1,7],r:4,dir:1,po:[1,6],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 7º): el ganador asciende',up:'la National League',dn:'el Step 3 (Northern Premier / Southern)'},
+nls:{n:'Nat. League South',g:1,b:[1,7],r:4,dir:1,po:[1,6],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 7º): el ganador asciende',up:'la National League',dn:'el Step 3 (Isthmian / Southern)'},
+npl:{n:'Northern Premier',g:1,b:[1,7],r:4,dir:1,po:[1,6],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 7º): el ganador asciende',up:'la National League North',dn:'el Step 4'},
+isth:{n:'Isthmian Premier',g:1,b:[1,7],r:4,dir:1,po:[1,6],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 7º): el ganador asciende',up:'la National League South',dn:'el Step 4'},
+slc:{n:'Southern Premier Central',g:1,b:[1,7],r:4,dir:1,po:[1,6],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 7º): el ganador asciende',up:'la National League North',dn:'el Step 4'},
+sls:{n:'Southern Premier South',g:1,b:[1,7],r:4,dir:1,po:[1,6],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 7º): el ganador asciende',up:'la National League South',dn:'el Step 4'},
+esp:{n:'LaLiga',g:4,b:[4,6],r:3,dir:0,l1:'Champions League (top 4)',l2:'Europa League y Conference (5º y 6º)',up:'',dn:'LaLiga Hypermotion'},
+seg:{n:'LaLiga Hypermotion',g:2,b:[2,6],r:4,dir:2,po:[2,4],l1:'Ascenso directo (1º y 2º)',l2:'Playoffs (3º a 6º): el ganador asciende',up:'LaLiga',dn:'la Primera RFEF'},
+pf1:{n:'Primera RFEF G1',g:1,b:[1,5],r:5,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'LaLiga Hypermotion',dn:'la Segunda RFEF'},
+pf2:{n:'Primera RFEF G2',g:1,b:[1,5],r:5,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'LaLiga Hypermotion',dn:'la Segunda RFEF'},
+sr1:{n:'Segunda RFEF G1',g:1,b:[1,5],r:3,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'la Primera RFEF',dn:'la Tercera RFEF'},
+sr2:{n:'Segunda RFEF G2',g:1,b:[1,5],r:3,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'la Primera RFEF',dn:'la Tercera RFEF'},
+sr3:{n:'Segunda RFEF G3',g:1,b:[1,5],r:3,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'la Primera RFEF',dn:'la Tercera RFEF'},
+sr4:{n:'Segunda RFEF G4',g:1,b:[1,5],r:3,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'la Primera RFEF',dn:'la Tercera RFEF'},
+sr5:{n:'Segunda RFEF G5',g:1,b:[1,5],r:3,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'la Primera RFEF',dn:'la Tercera RFEF'}};
+const mk=G=>a=>({n:a[0],pts:a[1],gd:a[2],g:a[3]||G,adj:a[4]||0,m:1.4,s:0});
+const S={fx:{},country:'en',season:1,ph:'ready',res:null,cur:'pl',tot:{pl:38,ch:46,l1:46,l2:46,nl:46,nln:46,nls:46,npl:42,isth:42,slc:42,sls:42,esp:38,seg:42,pf1:38,pf2:38,sr1:34,sr2:34,sr3:34,sr4:34,sr5:34},L:{
+pl:{t:[["Arsenal",24,0],["Manchester City",21,0],["Brighton",19,0],["Chelsea",16,0],["Liverpool",15,0],["Brentford",14,0],["Everton",13,0],["Bournemouth",12,0],["Tottenham",12,0],["Aston Villa",12,0],["Hull City",11,0],["Leeds United",11,0],["Newcastle",11,0],["Ipswich Town",11,0],["Fulham",9,0],["Coventry City",9,0],["Manchester United",7,0],["Crystal Palace",7,0],["Nottingham Forest",6,0],["Sunderland",5,0,9,0.45]].map(mk(9))},
+ch:{t:[["Middlesbrough",28,11],["Wolverhampton",27,8],["Birmingham City",26,13],["Stoke City",26,5],["Swansea City",26,5],["West Bromwich",25,5],["Southampton",24,15],["West Ham",23,15],["Sheffield United",22,3],["Portsmouth",22,3],["QPR",21,5],["Norwich City",18,3],["Millwall",18,-1],["Blackburn",18,-2],["Bristol City",18,-3],["Wrexham",17,-2],["Bolton",17,-7],["Cardiff City",15,-1],["Lincoln City",15,-10],["Watford",14,-10],["Charlton",14,-11],["Burnley",10,-8],["Derby County",7,-18],["Preston",5,-18]].map(mk(14))},
+l1:{t:[["Huddersfield",29,16,14],["Stockport County",26,12,14],["Oxford United",26,11,13],["Luton Town",24,6,14],["Plymouth Argyle",23,2,14],["Reading",22,10,14],["Bradford City",22,2,13],["Cambridge United",21,0,14],["Sheffield Wednesday",20,8,13],["Leicester City",19,3,13],["Mansfield Town",19,2,13],["MK Dons",18,2,13],["Wycombe",18,-2,13],["Leyton Orient",17,5,13],["Burton Albion",17,-3,14],["Stevenage",16,4,12],["Notts County",14,-1,12],["AFC Wimbledon",13,-12,13],["Blackpool",12,-4,12],["Doncaster",12,-8,13],["Wigan Athletic",11,-11,14],["Peterborough",10,-12,13],["Barnsley",9,-10,12],["Bromley",9,-20,13]].map(mk(14))},
+l2:{t:[["Salford City",31,10,14],["Barnet",26,10,13],["Walsall",22,9,13],["Crewe Alexandra",22,0,14],["Cheltenham",21,-2,14],["Grimsby Town",20,6,14],["York City",20,3,14],["Gillingham",20,1,14],["Accrington",19,6,14],["Chesterfield",19,3,14],["Tranmere",19,2,14],["Exeter City",19,2,14],["Swindon Town",19,-2,14],["Newport County",18,3,14],["Shrewsbury",18,-5,14],["Fleetwood Town",17,0,14],["Bristol Rovers",16,-6,14],["Oldham Athletic",15,-4,14],["Port Vale",15,-4,12],["Rochdale",15,-9,14],["Northampton",14,-1,13],["Rotherham",12,-7,14],["Colchester",12,-7,13],["Crawley Town",9,-8,12]].map(mk(14))},
+nl:{t:[["Boreham Wood",44,27,16],["Harrogate Town",32,11,16],["Southend United",29,11,16],["AFC Fylde",29,6,16],["Yeovil Town",28,15,16],["Worthing",28,7,16],["Altrincham",28,0,16],["Carlisle United",26,9,16],["Barrow",25,7,15],["FC Halifax",24,8,16],["Sutton United",24,-1,16],["Woking",21,1,16],["Kidderminster",21,1,16],["Aldershot Town",21,0,16],["Hornchurch",21,-8,16],["Forest Green Rovers",19,-1,14],["Eastleigh",19,-6,16],["Wealdstone",18,-6,16],["Boston United",18,-8,16],["Tamworth",17,-7,15],["Hartlepool United",15,-9,16],["Solihull Moors",13,-21,16],["Scunthorpe United",10,-11,15],["Gateshead",4,-25,15]].map(mk(16))},
+nln:{t:[["Macclesfield",16,7,6],["Hereford",13,7,6],["Oxford City",13,5,6],["Chester",13,4,6],["Hebburn Town",13,3,6],["Harborough Town",11,3,6],["South Shields",11,3,5],["Buxton",10,1,6],["Scarborough Athletic",9,4,6],["Bedford Town",9,-1,6],["Spalding United",8,2,6],["Chorley",8,1,6],["Morecambe",7,-1,6],["Kings Lynn Town",7,-3,6],["Merthyr Town",6,0,6],["Marine",6,0,6],["Hednesford Town",6,-2,6],["Darlington",6,-3,6],["Worksop Town",6,-5,6],["Brackley Town",5,-2,5],["Southport",5,-4,6],["Spennymoor Town",5,-7,6],["Radcliffe",3,-8,6],["AFC Telford United",2,-4,6]].map(mk(6))},
+nls:{t:[["Dagenham & Redbridge",15,4,6],["Maidstone United",13,7,6],["Folkestone Invicta",11,8,5],["Weston-super-Mare",11,7,6],["Tonbridge Angels",10,6,6],["Truro City",10,6,5],["Dorking Wanderers",10,5,6],["Farnborough",10,2,5],["Farnham Town",9,0,6],["Horsham",8,2,5],["Dover Athletic",8,0,6],["Salisbury",7,4,5],["Billericay Town",7,2,5],["Chesham United",7,1,6],["Chelmsford City",7,1,5],["Hemel Hempstead",7,-2,6],["AFC Totton",7,-5,5],["Maidenhead United",6,-2,6],["Torquay United",6,-3,6],["Braintree Town",4,-6,5],["Hampton & Richmond",4,-11,6],["Ebbsfleet United",0,0,0],["Slough Town",0,-8,5],["Walton & Hersham",0,-18,6]].map(mk(6))},
+npl:{t:[["Cleethorpes Town",19,18],["Avro",19,10],["Redcar Athletic",18,11],["Warrington Town",17,7],["Guiseley",16,9],["Bury",13,7],["Curzon Ashton",13,6],["Gainsborough Trinity",13,4],["Workington",13,0],["Alfreton Town",12,6],["Warrington Rylands",12,-1],["Ashton United",11,2],["Hyde United",11,-5],["Emley",10,-3],["Lancaster City",10,-6],["Whitby Town",9,-12],["Ilkeston Town",7,-13],["Leek Town",6,-1],["Quorn",6,-8],["Bamber Bridge",6,-11],["Stockton Town",4,-10],["FC United of Manchester",2,-10]].map(mk(8))},
+isth:{t:[["Enfield Town",34,27,14],["Welling United",33,16,15],["Eastbourne Borough",31,14,14],["Lewes",27,5,15],["Dartford",27,2,15],["St Albans City",23,8,12],["Ramsgate",22,10,14],["Wingate & Finchley",22,1,14],["Carshalton Athletic",22,-9,16],["Leatherhead",21,6,13],["Chatham Town",21,4,14],["Dulwich Hamlet",21,-1,15],["Burgess Hill Town",21,-2,15],["Aveley",20,1,15],["AFC Whyteleafe",18,-1,15],["Cheshunt",18,-6,15],["Maldon & Tiptree",17,-16,17],["Cray Wanderers",15,8,10],["Brentwood Town",15,-3,14],["Three Bridges",9,-15,14],["Stanway Rovers",7,-26,15],["Whitehawk",6,-23,15]].map(mk(14))},
+slc:{t:[["Real Bedford",38,21,17],["Bury Town",35,5,17],["Bromsgrove Sporting",34,15,15],["Kettering Town",31,13,16],["Needham Market",28,12,16],["Peterborough Sports",27,6,16],["Rushall Olympic",27,4,17],["Alvechurch",26,14,14],["Anstey Nomads",26,8,15],["Halesowen Town",23,0,14],["Stourbridge",22,-1,15],["Racing Club Warwick",20,1,16],["Stratford Town",19,-5,16],["Redditch United",18,1,14],["Hitchin Town",16,-4,16],["Leiston",15,-4,14],["Banbury United",14,-11,16],["Worcester City",13,-2,13],["Leamington",13,-8,16],["Bishop's Stortford",13,-11,16],["Leighton Town",6,-19,15],["Stamford",5,-35,16]].map(mk(14))},
+sls:{t:[["Uxbridge",33,17,15],["Poole Town",32,11,16],["Hanworth Villa",31,13,16],["Plymouth Parkway",29,13,15],["Bath City",29,9,15],["Chichester City",28,3,16],["Chertsey Town",26,9,15],["Gosport Borough",24,3,16],["Wimborne Town",22,13,13],["Frome Town",20,3,15],["Taunton Town",19,6,13],["Berkhamsted",18,-2,14],["Hanwell Town",17,-2,15],["Sholing",16,-2,13],["Basingstoke Town",16,-7,16],["Evesham United",16,-13,16],["Yate Town",15,-11,15],["Chippenham Town",15,-12,15],["Bracknell Town",15,-18,17],["Malvern Town",14,-16,15],["Gloucester City",12,-4,13],["Havant & Waterlooville",12,-13,16]].map(mk(14))},
+esp:{t:[["Barcelona",30,0,11],["Real Madrid",30,0,12],["Atlético Madrid",28,0,11],["Real Betis",26,0,12],["Real Sociedad",22,0,12],["Sevilla",18,0,12],["Athletic Club",16,0,11],["Deportivo",15,0,12],["Racing Santander",14,0,12],["Villarreal",13,0,12],["Celta",13,0,12],["Alavés",13,0,12],["Getafe",13,0,12],["Espanyol",12,0,12],["Rayo Vallecano",12,0,11],["Osasuna",12,0,12],["Levante",11,0,12],["Elche",10,0,12],["Valencia",9,0,12],["Málaga",5,0,12]].map(mk(12))},
+seg:{t:[["Almería",29,14,13],["Castellón",27,18,12],["Burgos",24,5,13],["Eibar",23,7,12],["Granada",23,6,12],["Mallorca",22,8,12],["Sporting Gijón",22,-2,13],["Girona",21,10,13],["Real Oviedo",21,3,13],["Córdoba",19,0,13],["Valladolid",18,3,13],["Sabadell",17,1,12],["Las Palmas",17,-4,12],["Tenerife",15,-2,12],["Eldense",14,-4,12],["Celta Fortuna",13,-6,13],["Leganés",12,-12,13],["Andorra",11,-5,12],["Real Sociedad B",11,-7,12],["Cádiz",10,-2,13],["Albacete",10,-11,13],["Ceuta",5,-20,13]].map(mk(12))},
+pf1:{t:[["Lugo",28,10,11],["Logroñés",23,8,11],["Pontevedra",18,2,11],["Real Avilés",17,8,11],["Mirandés",17,3,10],["Racing Ferrol",17,1,11],["Extremadura 1924",16,6,11],["Athletic Club II",15,4,10],["Cacereño",15,0,11],["Barakaldo",14,0,11],["Ponferradina",14,0,10],["Mérida AD",13,2,10],["Real Unión",13,0,11],["Unionistas",13,-5,11],["Cultural Leonesa",12,0,10],["Zamora",12,-2,11],["Deportivo II",11,-6,10],["Coria",9,-5,10],["Ourense",8,-12,11],["Arenas Getxo",8,-14,10]].map(mk(12))},
+pf2:{t:[["Zaragoza",24,9,11],["Villarreal II",22,11,11],["Real Jaén",19,4,11],["Real Murcia",19,4,10],["Alcorcón",18,9,11],["Ibiza",18,4,11],["Cartagena",16,3,11],["Hércules",16,-1,10],["Real Madrid II",15,2,10],["Huesca",15,0,11],["Gimnàstic",15,-1,11],["Antequera",14,2,11],["Sant Andreu",13,0,11],["Algeciras",13,-1,10],["Atlético Madrid II",12,2,11],["Águilas",9,-6,11],["Juventud Torremolinos",8,-9,11],["Europa",8,-12,11],["Rayo Majadahonda",7,-7,11],["Teruel",7,-13,11]].map(mk(12))},
+sr1:{t:[["Sestao River",25,10],["Eibar II",20,10],["Deportivo Alavés II",20,9],["Bergantiños",18,8],["Compostela",17,4],["Portugalete",16,3],["Amorebieta",16,2],["Real Oviedo II",15,-3],["Basconia",14,0],["Ourense C.F.",14,-3],["Gernika",12,6],["Racing Santander II",11,-4],["Llanera",10,-8],["Coruxo",9,-4],["Arosa",8,-6],["Marino de Luanco",8,-6],["Atlético Astorga",7,-6],["Gimnástica Torrelavega",6,-12]].map(mk(10))},
+sr2:{t:[["Barcelona B",25,15,10],["Terrassa",21,7,10],["Espanyol II",20,14,9],["Girona II",19,9,10],["Olot",18,3,10],["Ebro",17,6,10],["Osasuna II",17,5,10],["Manresa",14,3,10],["Reddis",14,-2,10],["Utebo",12,1,10],["Peña Sport",12,-2,10],["Barbastro",9,-2,10],["Tudelano",9,-6,10],["U.D. Logroñés II",9,-7,10],["SD Logroñés",8,-7,10],["Náxara",6,-10,9],["Arnedo",6,-13,10],["Calamocha",5,-14,10]].map(mk(10))},
+sr3:{t:[["Castellón II",21,13,10],["Deportiva Minera",20,4,10],["Ucam Murcia",19,11,10],["Cieza",17,8,10],["Castellonense",17,5,10],["La Nucía",16,1,10],["Alcoyano",14,-2,10],["Lorca Deportiva",13,2,10],["Intercity",13,1,9],["Atlético Baleares",13,0,10],["Poblense",13,-3,10],["Orihuela",13,-5,10],["Mallorca II",12,-3,10],["Yeclano",11,-2,10],["Elche II",11,-9,10],["Real Murcia II",8,-8,9],["Peña Deportiva",7,-6,10],["Valencia II",7,-7,10]].map(mk(10))},
+sr4:{t:[["Recreativo Huelva",21,13,10],["Don Benito",20,5,10],["Ciudad de Lucena",19,7,10],["Badajoz",17,3,10],["Real Betis II",15,5,9],["Xerez",15,5,10],["Mijas Las Lagunas",15,4,10],["Estepona",15,3,10],["Atlético Central",15,-2,10],["Sevilla Atlético",14,2,10],["Linares Deportivo",14,0,10],["Puente Genil",12,1,10],["Sanluqueño",10,-3,10],["Tenerife II",10,-3,9],["Marbella",10,-3,10],["Antoniano",6,-9,10],["Tamaraceite",6,-15,10],["Las Palmas II",5,-13,10]].map(mk(10))},
+sr5:{t:[["Numancia",19,11,10],["Salamanca UDS",19,5,10],["SS Reyes",19,4,10],["Conquense",18,9,9],["Atlético Madrid III",18,3,10],["Real Valladolid II",17,6,10],["Navalcarnero",16,3,10],["CF Talavera",15,3,9],["Guadalajara",13,0,10],["Albacete II",12,-11,10],["Real Madrid III",11,-1,10],["Atlético Tordesillas",10,0,10],["RSD Alcalá",10,-1,10],["Gimnástica Segoviana",10,-1,10],["Atlético Paso",10,-2,10],["Getafe II",8,-4,10],["Real Ávila",7,-10,10],["Calvo Sotelo",6,-14,10]].map(mk(10))}}};
+const BIG={'Manchester City':.4,Liverpool:.4,Arsenal:.35,Chelsea:.35,'Manchester United':.25,Tottenham:.2,Newcastle:.15,'Aston Villa':.1,Barcelona:.65,'Real Madrid':.5,'Atlético Madrid':.1,'Real Sociedad':.1,'Athletic Club':.1,Villarreal:.1,Sevilla:.1,'Real Betis':.1};
+for(const k of [...K,...KS])S.L[k].t.forEach(x=>{x.m=1.4+(BIG[x.n]||0);x.s=(x.pts+12*x.m)/(x.g+12)+0.25*x.gd/(x.g+12)+x.adj});
+let pool=["Liversedge","Dunston","Matlock Town","Bradford Park Avenue","Wellingborough Town","Sutton Coldfield Town","Carlton Town","Shepshed Dynamo","Bootle","Shifnal Town","Wythenshawe","Stalybridge Celtic","Witton Albion","Stafford Rangers","Prescot Cables","Garforth Town","Mickleover","Rugby Borough","Lincoln United","Clitheroe"].map(n=>({n,pts:0,gd:0,g:0,adj:0,s:1.3}));
+const COUNTRIES={en:{n:'Inglaterra',leagues:K,cups:['car','fa','tr','ft','sh']},es:{n:'España',leagues:KS,cups:['cr','sc']}};
+const CU={car:'Carabao Cup',fa:'FA Cup',tr:'EFL Trophy',ft:'FA Trophy',cr:'Copa del Rey',sc:'Supercopa de España',sh:'Community Shield'};
+const TO={pl:0,ch:-.35,l1:-.7,l2:-1.05,nl:-1.4,nln:-1.75,nls:-1.75,npl:-2.1,isth:-2.1,slc:-2.1,sls:-2.1};
+const RN=n=>({2:'Final',4:'Semifinales',8:'Cuartos de final',16:'Octavos de final',32:'Dieciseisavos'}[n]||'Ronda de '+n);
+const BT=()=>S.ph=='ready'?'▶ Simular temporada '+S.season+' (ligas y copas)':'➡️ Empezar temporada '+(S.season+1)+' (con ascensos y descensos)';
+function kmatch(a,b,two){const df=a.s+a.o-b.s-b.o,g=(d,h)=>[pois((h?1.45:1.15)*Math.exp(.45*d)),pois((h?1.1:1.4)*Math.exp(-.45*d))];
+let [x,y]=g(df,1),et=0,pen=0;
+if(two){const [q,p]=g(-df,1);x+=p;y+=q}
+else if(x==y){x+=pois(.38*Math.exp(.45*df));y+=pois(.38*Math.exp(-.45*df));et=1}
+let w=x>y?a:x<y?b:null;if(!w){pen=1;w=Math.random()<.5+.05*df?a:b}
+return{a,b,x,y,et,pen,two,w}}
+function ko(ts,two){let t=[...ts].sort(()=>Math.random()-.5),rounds=[],P=1;while(P*2<=t.length)P*=2;
+if(t.length>P){const e=t.length-P,pl=t.slice(0,2*e),by=t.slice(2*e),ms=[];for(let i=0;i<pl.length;i+=2)ms.push(kmatch(pl[i],pl[i+1],0));rounds.push({n:'Ronda previa',ms});t=[...ms.map(m=>m.w),...by]}
+while(t.length>1){const ms=[],sf=t.length==4&&two;for(let i=0;i<t.length;i+=2)ms.push(kmatch(t[i],t[i+1],sf));rounds.push({n:RN(t.length),ms});t=ms.map(m=>m.w)}
+return{rounds,w:t[0],f:rounds[rounds.length-1].ms[0]}}
+let poolP=["Cerdanyola","Calahorra","Ejea","Badalona Futur","Lleida Esportiu","Tarazona","Ribadumia","Arenteiro","Rápido de Bouzas","Haro Deportivo","Ontinyent","Saguntino","Atzeneta","Alzira","Torre Levante","Jerez Industrial","Villarrubia","Illescas","Montijo","Linense"].map(n=>({n,pts:0,gd:0,g:0,adj:0,m:1.4,s:1.3}));
+const pois=l=>{let L=Math.exp(-l),k=0,p=1;do{k++;p*=Math.random()}while(p>L);return k-1};
+function sim(k){const L=S.L[k],T=S.tot[k],t=L.t,n=t.length,pt=t.map(x=>x.pts),gd=t.map(x=>x.gd);
+for(let i=0;i<n;i++)for(let j=0;j<n;j++){if(i==j)continue;const q=((T-t[i].g)+(T-t[j].g))/(2*T);if(Math.random()>q)continue;const df=t[i].s-t[j].s,a=pois(1.45*Math.exp(.45*df)),b=pois(1.1*Math.exp(-.45*df));gd[i]+=a-b;gd[j]+=b-a;if(a>b)pt[i]+=3;else if(a<b)pt[j]+=3;else{pt[i]++;pt[j]++}}
+const o=[...Array(n).keys()].sort((x,y)=>pt[y]-pt[x]||gd[y]-gd[x]||Math.random()-.5);return{pt,gd,o}}
+function game(t,a,b){const df=t[a].s-t[b].s,x=pois(1.25*Math.exp(.45*df)),y=pois(1.25*Math.exp(-.45*df));return x>y?a:x<y?b:(Math.random()<.5+.1*df?a:b)}
+function playoffs(t,o,st,n){const s=o.slice(st,st+n);let s1,s2;
+if(n==6){const a=game(t,s[2],s[5]),b=game(t,s[3],s[4]),lo=o.indexOf(a)>o.indexOf(b)?a:b,hi=lo==a?b:a;s1=game(t,s[0],lo);s2=game(t,s[1],hi)}
+else{s1=game(t,s[0],s[3]);s2=game(t,s[1],s[2])}
+return{f:[s1,s2],w:game(t,s1,s2)}}
+function cups(r){K.forEach(k=>S.L[k].t.forEach(x=>x.o=TO[k]));const all=['pl','ch','l1','l2'].flatMap(k=>S.L[k].t),c={car:ko(all,1),fa:ko([...all,...['nl','nln','nls','npl','isth','slc','sls'].flatMap(k=>S.L[k].t)],0),ft:ko(['nl','nln','nls','npl','isth','slc','sls'].flatMap(k=>S.L[k].t),0),tr:ko([...S.L.l1.t,...S.L.l2.t],0)};
+if(S.prev){const A=S.prev.champ;let B=S.prev.faw;if(A==B)B=S.prev.ru;c.sh={m:kmatch(A,B,0)}}
+const pl=S.L.pl.t,o=r.pl.o;S.next={champ:pl[o[0]],ru:pl[o[1]],faw:c.fa.w};
+S.L.esp.t.forEach(x=>x.o=0);S.L.seg.t.forEach(x=>x.o=-.35);[...S.L.pf1.t,...S.L.pf2.t].forEach(x=>x.o=-.7);c.cr=ko([...S.L.esp.t,...S.L.seg.t,...S.L.pf1.t,...S.L.pf2.t],1);
+{const E=S.L.esp.t,Ro=r.esp.o,cf=c.cr.f.a==c.cr.w?c.cr.f.b:c.cr.f.a;S.nextE=[E[Ro[0]],E[Ro[1]],c.cr.w,cf];
+if(S.prevE){const u=[...new Set(S.prevE)];for(const i of Ro){if(u.length>=4)break;if(!u.includes(E[i]))u.push(E[i])}
+const m1=kmatch(u[0],u[3],0),m2=kmatch(u[1],u[2],0),f=kmatch(m1.w,m2.w,0);c.sc={rounds:[{n:'Semifinales',ms:[m1,m2]},{n:'Final',ms:[f]}],w:f.w,f}}}
+S.cups=c}
+function finish(){S.snap=ser();const r={};for(const k of [...K,...KS]){const c=C[k],R=sim(k);R.up=R.o.slice(0,c.dir);if(c.po){R.po=playoffs(S.L[k].t,R.o,c.po[0],c.po[1]);R.up.push(R.po.w)}r[k]=R}S.res=r;cups(r);S.ph='done'}
+function advance(){const r=S.res,up={},dn={},kp={},ad=(a,d)=>a.map(x=>(x.s+=d,x.m=(x.m||1.4)+d,x));
+for(const k of K){const L=S.L[k],T=S.tot[k];L.t.forEach((x,i)=>{const m=x.m||1.4;x.s=m+.75*(.65*x.s+.35*(r[k].pt[i]/T+.25*r[k].gd[i]/T)-m)});
+up[k]=r[k].up.map(i=>L.t[i]);dn[k]=r[k].o.slice(-C[k].r).map(i=>L.t[i]);kp[k]=L.t.filter(x=>!up[k].includes(x)&&!dn[k].includes(x))}
+const P=n=>Array.from({length:n},()=>pool.shift()),dnN=[dn.nl[0],dn.nl[3]],dnS=[dn.nl[1],dn.nl[2]];
+S.L.pl.t=[...kp.pl,...ad(up.ch,-.35)];
+S.L.ch.t=[...kp.ch,...ad(dn.pl,.35),...ad(up.l1,-.35)];
+S.L.l1.t=[...kp.l1,...ad(dn.ch,.35),...ad(up.l2,-.35)];
+S.L.l2.t=[...kp.l2,...ad(dn.l1,.35),...ad(up.nl,-.35)];S.L.nl.t=[...kp.nl,...ad(dn.l2,.35),...ad(up.nln,-.35),...ad(up.nls,-.35)];S.L.nln.t=[...kp.nln,...ad(dnN,.35),...ad(up.npl,-.35),...ad(up.slc,-.35)];S.L.nls.t=[...kp.nls,...ad(dnS,.35),...ad(up.isth,-.35),...ad(up.sls,-.35)];S.L.npl.t=[...kp.npl,...ad(dn.nln.slice(0,2),.35),...P(4)];S.L.slc.t=[...kp.slc,...ad(dn.nln.slice(2),.35),...P(4)];S.L.isth.t=[...kp.isth,...ad(dn.nls.slice(0,2),.35),...P(4)];S.L.sls.t=[...kp.sls,...ad(dn.nls.slice(2),.35),...P(4)];pool.push(...dn.npl,...dn.slc,...dn.isth,...dn.sls);
+{const T=S.tot,Lg={esp:S.L.esp,seg:S.L.seg,pf1:S.L.pf1,pf2:S.L.pf2,sr1:S.L.sr1,sr2:S.L.sr2,sr3:S.L.sr3,sr4:S.L.sr4,sr5:S.L.sr5};
+for(const k of KS)Lg[k].t.forEach((x,i)=>{const m=x.m||1.4;x.s=m+.75*(.65*x.s+.35*(r[k].pt[i]/T[k]+.25*r[k].gd[i]/T[k])-m)});
+const U={},D={},Kp={};for(const k of KS){const L=Lg[k],R=r[k];U[k]=R.up.map(i=>L.t[i]);D[k]=R.o.slice(-C[k].r).map(i=>L.t[i]);Kp[k]=L.t.filter(x=>!U[k].includes(x)&&!D[k].includes(x))}
+const dS=D.seg,Q=n=>Array.from({length:n},()=>poolP.shift());
+Lg.esp.t=[...Kp.esp,...ad(U.seg,-.35)];
+Lg.seg.t=[...Kp.seg,...ad(D.esp,.35),...ad(U.pf1,-.35),...ad(U.pf2,-.35)];
+Lg.pf1.t=[...Kp.pf1,...ad([dS[0],dS[3]],.35),...ad(U.sr1,-.35),...ad(U.sr2,-.35),...ad(U.sr3.slice(0,1),-.35)];Lg.pf2.t=[...Kp.pf2,...ad([dS[1],dS[2]],.35),...ad(U.sr3.slice(1),-.35),...ad(U.sr4,-.35),...ad(U.sr5,-.35)];
+const P1=D.pf1,P2=D.pf2;
+Lg.sr1.t=[...Kp.sr1,...ad(P1.slice(0,2),.35),...Q(3)];Lg.sr2.t=[...Kp.sr2,...ad(P1.slice(2,4),.35),...Q(3)];Lg.sr3.t=[...Kp.sr3,...ad([P1[4],P2[0]],.35),...Q(3)];Lg.sr4.t=[...Kp.sr4,...ad(P2.slice(1,3),.35),...Q(3)];Lg.sr5.t=[...Kp.sr5,...ad(P2.slice(3,5),.35),...Q(3)];
+poolP.push(...D.sr1,...D.sr2,...D.sr3,...D.sr4,...D.sr5)}
+for(const k of [...K,...KS])S.L[k].t.forEach(x=>{x.pts=0;x.gd=0;x.g=0});
+S.season++;S.ph='ready';S.res=null;S.cups=null;S.prev=S.next;S.prevE=S.nextE;S.fx={}}
+function zone(p,k){const n=S.L[k].t.length,c=C[k];if(p>=n-c.r)return'z3';if(p<c.g)return'z1';if(p>=c.b[0]&&p<c.b[1])return'z2';return''}
+function base(L){const n=L.t.length,pl=L.t[0].g>0;return[...Array(n).keys()].sort((x,y)=>pl?(L.t[y].pts-L.t[x].pts||L.t[y].gd-L.t[x].gd):L.t[y].s-L.t[x].s)}
+function fxRound(k){const L=S.L[k],T=S.tot[k],f=S.fx[k]||(S.fx[k]={n:0,used:new Set(),m:[]}),ts=L.t.filter(x=>x.g<T);let best=null;
+for(let tr=0;tr<30;tr++){const a=[...ts].sort(()=>Math.random()-.5),m=[];let rp=0;for(let i=0;i+1<a.length;i+=2){if(f.used.has(a[i].n+'|'+a[i+1].n))rp++;m.push({h:a[i],a:a[i+1],x:'',y:''})}if(!best||rp<best.rp)best={rp,m};if(!rp)break}
+f.m=best?best.m:[];f.n++;f.m.forEach(m=>f.used.add(m.h.n+'|'+m.a.n))}
+function fxDraw(k){const el=$('fxv');if(S.res||S.ph!='ready'){el.innerHTML='';return}
+if(!S.fx[k]||!S.fx[k].m.length)fxRound(k);const F=S.fx[k];
+if(!F.m.length){el.innerHTML='<div class="rd"><h3>Partidos</h3><div class="mt" style="display:block;color:var(--mut)">No quedan partidos por jugar en esta liga.</div></div>';return}
+el.innerHTML=`<div class="rd"><h3>Partidos · jornada ${F.n} (completá los resultados)</h3>`+F.m.map((m,i)=>`<div class="fr"><span class="a">${crest(m.h.n)}${m.h.n}</span><input type="number" min="0" max="20" data-i="${i}" data-s="x" value="${m.x}"><b>-</b><input type="number" min="0" max="20" data-i="${i}" data-s="y" value="${m.y}"><span>${crest(m.a.n)}${m.a.n}</span></div>`).join('')+`<div class="fbar"><button class="fb" id="e-fsim">🎲 Completar los que faltan</button><button class="fb" id="e-fok">✅ Aplicar resultados</button></div></div>`;
+el.querySelectorAll('input').forEach(e=>e.oninput=()=>{F.m[+e.dataset.i][e.dataset.s]=e.value});
+$('fsim').onclick=()=>{F.m.forEach(m=>{if(m.x===''||m.y===''){const df=m.h.s-m.a.s;m.x=pois(1.45*Math.exp(.45*df));m.y=pois(1.1*Math.exp(-.45*df))}});fxDraw(k)};
+$('fok').onclick=()=>{F.m.forEach(m=>{if(m.x===''||m.y==='')return;const x=+m.x,y=+m.y;m.h.g++;m.a.g++;m.h.gd+=x-y;m.a.gd+=y-x;if(x>y)m.h.pts+=3;else if(x<y)m.a.pts+=3;else{m.h.pts++;m.a.pts++}});fxRound(k);draw()}}
+const CCL={Arsenal:['#ef0107','#fff'],'Manchester City':['#6cabdd','#fff'],Brighton:['#0057b8','#fff'],Chelsea:['#034694','#fff'],Liverpool:['#c8102e','#c8102e'],Brentford:['#e30613','#fff'],Everton:['#003399','#fff'],Bournemouth:['#da291c','#111'],Tottenham:['#fff','#132257'],'Aston Villa':['#670e36','#95bfe5'],'Hull City':['#f5a12d','#111'],'Leeds United':['#fff','#1d428a'],Newcastle:['#111','#fff'],'Ipswich Town':['#0044a9','#fff'],Fulham:['#fff','#111'],'Coventry City':['#59cbe8','#fff'],'Manchester United':['#da291c','#111'],'Crystal Palace':['#1b458f','#c4122e'],'Nottingham Forest':['#dd0000','#fff'],Sunderland:['#eb172b','#fff'],'West Ham':['#7a263a','#1bb1e7'],Wolverhampton:['#fdb913','#231f20'],Southampton:['#d71920','#fff'],Middlesbrough:['#e11b22','#fff'],'Birmingham City':['#0000ff','#fff'],'Stoke City':['#e03a3e','#fff'],'Swansea City':['#fff','#111'],'West Bromwich':['#122f67','#fff'],'Sheffield United':['#ee2737','#fff'],Portsmouth:['#001489','#fff'],'Leicester City':['#003090','#fdbe11'],Burnley:['#6c1d45','#99d6ea'],Wrexham:['#d71920','#fff'],Barcelona:['#a50044','#004d98'],'Real Madrid':['#fff','#febe10'],'Atlético Madrid':['#cb3524','#fff'],'Real Betis':['#0bb363','#fff'],'Real Sociedad':['#0067b1','#fff'],Sevilla:['#fff','#d80027'],'Athletic Club':['#ee2523','#fff'],Deportivo:['#1d4f9c','#fff'],'Racing Santander':['#fff','#0a7a3c'],Villarreal:['#ffe667','#005187'],Celta:['#8ac3ee','#fff'],'Alavés':['#0761af','#fff'],Getafe:['#005999','#fff'],Espanyol:['#007fc8','#fff'],'Rayo Vallecano':['#fff','#e53027'],Osasuna:['#d91a21','#0a346f'],Levante:['#004d98','#b4053f'],Elche:['#fff','#05642c'],Valencia:['#fff','#111'],'Málaga':['#0090d4','#fff'],Zaragoza:['#fff','#0047ab'],Mallorca:['#e20613','#111'],Girona:['#e30613','#fff'],'Las Palmas':['#ffe400','#0055a5'],'Real Oviedo':['#0047ab','#fff'],'Sporting Gijón':['#e30613','#fff'],Valladolid:['#5e2a84','#fff'],'Cádiz':['#ffe500','#0047ab'],Granada:['#e30613','#fff'],'Almería':['#e30613','#fff']};
+const crest=n=>{const c=CCL[n];if(c)return`<i class="bd" style="background:linear-gradient(135deg,${c[0]} 50%,${c[1]} 50%)"></i>`;let h=0;for(let k=0;k<n.length;k++)h=(h*31+n.charCodeAt(k))%360;return`<i class="bd" style="background:hsl(${h},55%,48%)"></i>`};
+const sg=v=>v>0?'+'+v:''+v;
+const HS=x=>'Temporada '+S.season+' · '+(2025+S.season)+'/'+String(26+S.season).slice(-2)+' · '+COUNTRIES[S.country].n+(x?' · '+x:'');
+const TT=x=>({n:x.n,pts:x.pts,gd:x.gd,g:x.g,adj:x.adj||0,m:x.m,s:x.s});
+function ser(){const L={};for(const k of [...K,...KS])L[k]=S.L[k].t.map(TT);
+return JSON.stringify({v:1,season:S.season,country:S.country,cur:S.cur,L,pool:pool.map(TT),poolP:poolP.map(TT),prev:S.prev?{c:S.prev.champ.n,f:S.prev.faw.n,r:S.prev.ru.n}:null,prevE:S.prevE?S.prevE.map(x=>x.n):null})}
+function load(str){const d=JSON.parse(str);if(d.v!==1)throw new Error('v');for(const k of [...K,...KS])if(!Array.isArray(d.L[k]))throw new Error('k');
+for(const k of [...K,...KS])S.L[k].t=d.L[k].map(o=>({...o,o:0}));
+pool=d.pool.map(o=>({...o,o:0}));poolP=d.poolP.map(o=>({...o,o:0}));
+const all=[...K,...KS].flatMap(k=>S.L[k].t),f=n=>all.find(x=>x.n===n);
+S.prev=d.prev&&f(d.prev.c)&&f(d.prev.f)&&f(d.prev.r)?{champ:f(d.prev.c),faw:f(d.prev.f),ru:f(d.prev.r)}:null;
+S.prevE=d.prevE&&d.prevE.every(f)?d.prevE.map(f):null;
+S.season=d.season;S.country=d.country;S.cur=d.cur;S.ph='ready';S.res=null;S.cups=null;S.fx={};S.snap=null}
+const say=t=>{$('msg').textContent=t};
+function save(){try{localStorage.setItem('simfut_v1',S.ph=='done'&&S.snap?S.snap:ser());say(S.ph=='done'?'Guardé el inicio de esta temporada (antes de simularla). Empezá la siguiente para guardar el avance.':'Partida guardada en este navegador.')}catch(e){say('No se pudo guardar en este navegador.')}}
+let rsArm=0,INIT=null,INIT0=null;
+function reset(){if(!rsArm){rsArm=1;$('rs').textContent='⚠️ ¿Seguro? Tocá otra vez';setTimeout(()=>{rsArm=0;$('rs').textContent='🔄 Empezar desde cero'},4000);return}
+rsArm=0;try{localStorage.removeItem('simfut_v1')}catch(e){}load(INIT0);$('rs').textContent='🔄 Empezar desde cero';say('Torneo reiniciado desde cero: todas las ligas y copas sin partidos jugados.');draw()}
+function tabsR(){const f=(id,arr,nm,lb)=>{$(id).innerHTML=`<span class="grp">${lb}</span>`+arr.map(x=>`<button class="${x==S.cur?'on':''}" data-k="${x}">${nm(x)}</button>`).join('');$(id).querySelectorAll('button').forEach(e=>e.onclick=()=>{S.cur=e.dataset.k;draw()})};const co=COUNTRIES[S.country];f('tabs',co.leagues,x=>C[x].n,'Ligas');f('tabs2',co.cups,x=>CU[x],'Copas')}
+function drawCup(){const k=S.cur,c=S.cups&&S.cups[k];$('lgcard').style.display='none';$('ht').textContent=CU[k];$('hs').textContent=HS(c&&(c.w||c.m)?'finalizada':'por jugarse');$('fxv').innerHTML='';$('leg').innerHTML='';$('go').textContent=BT();
+const sc=m=>m.x+'-'+m.y+(m.two?' g':m.et?' pr':'')+(m.pen?' p':'');
+const mt=m=>`<div class="mt"><span class="a ${m.w==m.a?'w':''}">${crest(m.a.n)}${m.a.n}</span><span class="sc">${sc(m)}</span><span class="${m.w==m.b?'w':''}">${crest(m.b.n)}${m.b.n}</span></div>`;
+const w=$('win');let h='';
+if(!c||(k=='sh'&&!c.m)){w.style.display='none';h=`<div class="rd"><h3>${CU[k]}</h3><div class="mt" style="display:block;color:var(--mut)">${k=='sh'?(S.prev?'Simulá la temporada para ver la Community Shield.':'La Community Shield de este año ya se jugó en agosto: aparece desde la temporada 2 (campeón de liga vs campeón de FA Cup).'):k=='sc'?(S.prevE?'Simulá la temporada para ver la Supercopa.':'La Supercopa se juega desde la temporada 2: enfrenta al campeón y subcampeón de LaLiga con el campeón y finalista de la Copa del Rey.'):'Tocá el botón para simular la copa de esta temporada.'}</div></div>`}
+else if(k=='sh'){w.style.display='block';w.innerHTML=`<small>🏆 Campeón de la Community Shield</small><b>${c.m.w.n}</b><div class="sub">${c.m.a.n} ${sc(c.m)} ${c.m.b.n}</div>`;h=`<div class="rd"><h3>Final</h3>${mt(c.m)}</div>`}
+else{w.style.display='block';w.innerHTML=`<small>🏆 Campeón</small><b>${c.w.n}</b><div class="sub">Final: ${c.f.a.n} ${sc(c.f)} ${c.f.b.n}</div>`;h=[...c.rounds].reverse().map(r=>`<div class="rd"><h3>${r.n}</h3>${r.ms.map(mt).join('')}</div>`).join('')}
+$('cupv').innerHTML=h;
+$('nt').textContent='pr = prórroga · p = penales · g = global (ida y vuelta). La FA Cup incluye hasta el Step 3 (las rondas previas van dentro del sorteo); la FA Trophy usa la National League y las ligas Norte, Sur y Step 3. Sorteo libre, no el cuadro real; La Copa del Rey llega hasta la Primera RFEF.'}
+function draw(){tabsR();if(CU[S.cur])return drawCup();$('lgcard').style.display='';$('cupv').innerHTML='';fxDraw(S.cur);const k=S.cur,L=S.L[k],c=C[k],n=L.t.length,r=S.res&&S.res[k],b=base(L),rk=[];b.forEach((i,p)=>rk[i]=p);
+$('ht').textContent=c.n;$('hs').textContent=HS(r?'final simulado':L.t.some(x=>x.g>0)?'en juego':'pretemporada');$('tt').textContent=r?'Tabla final simulada':'Tabla de posiciones';
+$('leg').innerHTML=`<span><i style="background:var(--g)"></i>${c.l1}</span>`+(c.l2?`<span><i style="background:var(--b)"></i>${c.l2}</span>`:'')+`<span><i style="background:var(--r)"></i>Descenso a ${c.dn} (últimos ${c.r})</span>`;
+$('hd').innerHTML=r?'<span>#</span><span>Equipo</span><span>Hoy</span><span>DG</span><span>Pts</span><span></span>':'<span>#</span><span>Equipo</span><span>PJ</span><span>DG</span><span>Pts</span><span></span>';
+const order=r?r.o:b;
+$('rows').innerHTML=order.map((i,p)=>{const t=L.t[i],ch=rk[i]-p,mv=r&&ch?(ch>0?`<span class="up">▲${ch}</span>`:`<span class="dn">▼${-ch}</span>`):'';
+const tg=r?(p>=n-c.r?'<em>⬇️</em>':r.up.includes(i)&&c.dir?'<em>⬆️</em>':''):'';
+return `<div class="row ${zone(p,k)} ${r?'pop':''}" style="animation-delay:${p*12}ms"><span class="ps">${p+1}</span><span class="nm">${crest(t.n)}${t.n}${tg}</span>`+(r?`<span class="mut">${t.pts}</span><span class="mut">${sg(r.gd[i])}</span><span class="fin">${r.pt[i]}</span>`:`<span class="mut">${t.g}</span><span class="mut">${sg(t.gd)}</span><span class="fin">${t.pts}</span>`)+`<span>${mv}</span></div>`}).join('');
+const w=$('win');
+if(r){const nm=i=>L.t[i].n;w.style.display='block';const rel=r.o.slice(-c.r).map(nm).join(', ');
+w.innerHTML=!c.po?`<small>🏆 Campeón</small><b>${nm(r.o[0])}</b><div class="sub">con ${r.pt[r.o[0]]} puntos · ⬇️ Descienden a ${c.dn}: ${rel}</div>`
+:`<small>⬆️ Ascienden a ${c.up}</small><b>${r.up.map(nm).join(', ')}</b><div class="sub">${nm(r.po.w)} ganó los playoffs (final: ${nm(r.po.f[0])} vs ${nm(r.po.f[1])}) · Campeón: ${nm(r.o[0])} · ⬇️ Descienden a ${c.dn}: ${rel}</div>`}
+else w.style.display='none';
+$('go').textContent=BT();
+$('nt').textContent=S.ph=='ready'?(S.season==1&&S.L.pl.t.some(x=>x.g>0)?'Fechas de las tablas: Premier y EFL 4 nov.; National League 31 oct.; National League Norte y Sur 31 ago.; Northern Premier 1 sep.; Isthmian y Southern 27 oct. La primera temporada se juega desde hoy; las siguientes, completas desde cero. ':'Inicio de temporada: todos en cero, ordenados por nivel. ')+'La fuerza de cada equipo sale de sus resultados, y al subir o bajar de categoría se ajusta.'+(S.season==1&&k=='pl'?' (A Sunderland le puse un ajuste manual para que no quede último siempre.)':''):'Es una simulación posible: cada vez sale un final distinto. ▲▼ comparan con la posición de partida. Los reemplazos desde el Step 4 son clubes reales que elegí yo.'}
+$('go').onclick=()=>{S.ph=='ready'?finish():advance();draw()};
+INIT=ser();INIT0=(()=>{const d=JSON.parse(INIT);for(const k in d.L)d.L[k].forEach(x=>{x.pts=0;x.gd=0;x.g=0});return JSON.stringify(d)})();$('sv').onclick=save;$('rs').onclick=reset;$('rt').onclick=()=>{load(INIT);say('Se cargaron las tablas reales de hoy.');draw()};
+try{const sv=localStorage.getItem('simfut_v1');if(sv){load(sv);say('Se cargó tu partida guardada.')}}catch(e){}
+draw();
+window.EU={set(c){S.country=c;const co=COUNTRIES[c];if(!co.leagues.includes(S.cur)&&!co.cups.includes(S.cur))S.cur=co.leagues[0];draw()}};
+
+})();
+</script>
+<script>
+(function(){var KEY='simfut_country',cur;try{cur=localStorage.getItem(KEY)}catch(x){}if(!/^(ar|en|es)$/.test(cur||''))cur='ar';
+var bs=document.querySelectorAll('#cty button');
+function set(c){cur=c;try{localStorage.setItem(KEY,c)}catch(x){}document.body.dataset.c=c;
+document.getElementById('secAR').hidden=c!='ar';document.getElementById('secEU').hidden=c=='ar';
+bs.forEach(function(b){b.classList.toggle('on',b.dataset.c==c)});
+if(c=='ar')redraw();else EU.set(c)}
+bs.forEach(function(b){b.onclick=function(){if(b.dataset.c!=cur){set(b.dataset.c);window.scrollTo(0,0)}}});
+set(cur)})();
+</script>
+</body></html>
