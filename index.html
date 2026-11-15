@@ -219,6 +219,17 @@ footer{max-width:1080px;margin:0 auto;padding:4px 14px 28px;color:var(--mut);fon
 footer a{color:var(--mut)}
 @media(max-width:560px){.pg2{grid-template-columns:1fr}.fr{grid-template-columns:minmax(0,1fr) 38px 8px 38px minmax(0,1fr) 34px;gap:4px;padding:6px 8px;font-size:.82rem}.fr .sim{width:32px;padding:0}.fr .sim span{display:none}.hm{display:none}.wrap{padding:12px 10px 24px}.hero{padding:14px 14px 14px 20px}.brand small{display:none}.brand>div:last-child{display:none}#secEU .hd,#secEU .row{grid-template-columns:34px minmax(0,1fr) 34px 42px 46px 34px;font-size:.84rem}}
 #secAR .c>p.lg{padding:8px 2px 0}
+
+/* visor de fechas */
+.navh{display:flex;align-items:center;gap:10px;padding-right:10px!important}
+.navh .nt2{flex:1;text-align:center}
+.navh b{color:var(--wh)}.navh small{color:var(--mut);font-weight:500;letter-spacing:.04em}
+.nb{flex:none;width:34px;height:30px;border-radius:7px;border:1px solid var(--ln);background:var(--pn2);color:var(--wh);font:700 1.5rem/1 var(--fc);display:grid;place-items:center;padding:0 0 3px;transition:border-color .15s,color .15s}
+.nb:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.nb:disabled{opacity:.28}
+.navp>.pg{padding:6px 12px}
+.navp .mt:first-child{border-top:0}
+#secAR .rd.nav{margin-left:0;margin-right:0}
 </style></head><body data-c="ar">
 <header class="top"><div class="in">
 <div class="brand"><div class="logo">⚽</div><div><b>Simulador de Fútbol</b><small><i></i>Temporada en vivo</small></div></div>
@@ -250,7 +261,7 @@ footer a{color:var(--mut)}
 <div class="hero"><div class="sw" id="e-tabs"></div><div class="sw" id="e-tabs2"></div><div class="ht" id="e-ht"></div><div class="hs" id="e-hs"></div></div>
 <div class="act"><button class="big" id="e-go"></button>
 <div class="act2"><button id="e-sv">💾 Guardar</button><button id="e-rs">🔄 Empezar desde cero</button><button id="e-rt">📅 Tablas de hoy</button></div>
-<p class="help msg" id="e-msg"></p></div>
+<p class="help" id="e-hp"></p><p class="help msg" id="e-msg"></p></div>
 <div class="win" id="e-win"></div>
 <div class="leg" id="e-leg"></div>
 <div class="c" id="e-lgcard"><h2 id="e-tt">Tabla de posiciones</h2><div class="hd" id="e-hd"></div><div id="e-rows"></div></div>
@@ -301,6 +312,15 @@ function edBar(p,apply,txt){return"<div class='fbar'><button class='fb' onclick=
 function edStart(p){EDK[p]=[]}
 var ED_HELP="<p class='fxh'>Cargá el resultado a mano o tocá <b class='simt'>"+ICO+"Sim</b> para simular ese partido. Lo podés corregir todas las veces que quieras hasta tocar <b>Aplicar</b>.</p>";
 
+/* ===== Visor de resultados fecha por fecha (flechas ‹ ›) ===== */
+var NAV={};
+function navCard(id,pages,title){var n=pages.length;if(!n)return"";var i=NAV[id],pn=NAV[id+"_n"];
+if(i==null||i>=n||(pn!=null&&pn!=n&&i==pn-1))i=n-1;NAV[id]=i;NAV[id+"_n"]=n;
+var h="<div class='rd nav' id='nav_"+id+"'><h3 class='navh'><button class='nb' "+(i==0?"disabled ":"")+"onclick=\"navGo('"+id+"',-1)\" aria-label='Fecha anterior'>‹</button><span class='nt2'>"+title+" · <b id='navt_"+id+"'>"+pages[i].t+"</b> <small id='navc_"+id+"'>("+(i+1)+" de "+n+")</small></span><button class='nb' "+(i==n-1?"disabled ":"")+"onclick=\"navGo('"+id+"',1)\" aria-label='Fecha siguiente'>›</button></h3>";
+pages.forEach(function(p,k){h+="<div class='navp' data-t=\""+String(p.t).replace(/"/g,"&quot;")+"\""+(k==i?"":" hidden")+">"+p.h+"</div>"});return h+"</div>"}
+function navGo(id,d){var el=document.getElementById("nav_"+id);if(!el)return;var ps=el.querySelectorAll(".navp"),n=ps.length,i=Math.max(0,Math.min(n-1,(NAV[id]||0)+d));NAV[id]=i;
+ps.forEach(function(p,k){p.hidden=k!=i});document.getElementById("navt_"+id).textContent=ps[i].dataset.t;document.getElementById("navc_"+id).textContent="("+(i+1)+" de "+n+")";var b=el.querySelectorAll(".nb");b[0].disabled=i==0;b[1].disabled=i==n-1}
+
 
 var Q=[[["Boca",82],["River",81]],[["Independiente",72],["Racing",77]],[["San Lorenzo",77],["Huracán",70]],[["Newell’s",63],["Rosario Central",81]],[["Lanús",70],["Banfield",63]],[["Vélez",76],["Tigre",63]],[["Platense",70],["Argentinos",74]],[["Estudiantes LP",76],["Gimnasia LP",62]],[["Talleres",71],["Belgrano",72]],[["Gimnasia (Mza)",59],["Ind. Rivadavia",72]],[["Unión",64],["Sarmiento",58]],[["Riestra",68],["Barracas Central",63]],[["Instituto",62],["Atl. Tucumán",62]],[["Central Córdoba",63],["Estudiantes (RC)",55]],[["Defensa y Justicia",64],["Aldosivi",57]]];
 var T=[];Q.forEach(function(p,i){T[i]={n:p[0][0],s:p[0][1]};T[15+i]={n:p[1][0],s:p[1][1]}});
@@ -325,7 +345,7 @@ if(x>y){H.g++;H.pt+=3;A.p++}else if(x<y){A.g++;A.pt+=3;H.p++}else{H.e++;A.e++;H.
 function cmp(t){return function(x,y){var a=R[t][x],b=R[t][y];return b.pt-a.pt||(b.gf-b.gc)-(a.gf-a.gc)||b.gf-a.gf||tb[x]-tb[y]}}
 function zone(z,t){var ids=[];for(var i=0;i<15;i++)ids.push(z*15+i);return ids.sort(cmp(t))}
 function startTour(t){FM=FM.map(function(v){return v*.5});E=T.map(function(x){return x.s+(Math.random()+Math.random()+Math.random()-1.5)*7});tour=t;stage="reg";fecha=0;rd=0;R[t]=newSt();FX=mkFix(t==1);PO=null;last=null;tab=0}
-function reset(){FM=[];R=[null,null,R&&R[2]];champ=[null,null];troph=null;tb=T.map(Math.random);startTour(0);draw()}
+function reset(){FM=[];HL=[[],[]];R=[null,null,R&&R[2]];champ=[null,null];troph=null;tb=T.map(Math.random);startTour(0);draw()}
 function best(x,y){return seed[x]<=seed[y]?[x,y]:[y,x]}
 function startPO(){var A=zone(0,tour).slice(0,8),B=zone(1,tour).slice(0,8);seed={};
 A.forEach(function(id,k){seed[id]=k+1+(k+1)/100});B.forEach(function(id,k){seed[id]=k+1+(k+1)/100+0.001});
@@ -333,7 +353,11 @@ var o=[[A[0],B[7]],[B[3],A[4]],[A[1],B[6]],[B[2],A[5]],[B[0],A[7]],[A[3],B[4]],[
 PO=[o.map(function(m){var q=best(m[0],m[1]);return{h:q[0],a:q[1]}})];PO.names=["Octavos","Cuartos","Semifinales","Final"];stage="po";rd=0;tab=2}
 function setKO(m,x,y,neu){formL(m.h,m.a,x,y,neu);m.gh=x;m.ga=y;if(x==y){m.pen=1;var p=0.5+(E[m.h]-E[m.a])/400;m.w=Math.random()<p?m.h:m.a}else m.w=x>y?m.h:m.a}
 function ko(m,neu){var r=scoreL(m.h,m.a,neu);setKO(m,r[0],r[1],neu)}
-function curL(){if(!last||last.f!=fecha)last={t:"Fecha "+(fecha+1),f:fecha,m:[],d:{}}}
+var HL=[[],[]],HP=[];
+function curL(){if(!last||last.f!=fecha){last={t:"Fecha "+(fecha+1),f:fecha,m:[],d:{}};HL[tour].push(last)}}
+// fila de resultado (fútbol argentino)
+function resRow(m,f){return"<div class='m'><span"+(m[2][0]>m[2][1]?" class='w2'":"")+">"+f(m[0])+"</span><b>"+m[2][0]+" - "+m[2][1]+"</b><span"+(m[2][1]>m[2][0]?" class='w2'":"")+">"+f(m[1])+"</span></div>"}
+function histPages(list,curF,f){return list.filter(function(x){return x.f!==curF&&x.m.length}).map(function(x){return{t:x.t,h:"<div class='pg'>"+x.m.slice().sort(function(a,b){return a[3]-b[3]}).map(function(m){return resRow(m,f)}).join("")+"</div>"}})}
 function kL(i){return"L"+tour+"_"+fecha+"_"+i}
 function kLP(m){return"LP"+tour+"_"+rd+"_"+PO[rd].indexOf(m)}
 function recL(i,x,y){var m=FX[fecha][i];rec(tour,m[0],m[1],x,y);formL(m[0],m[1],x,y);last.m.push([m[0],m[1],[x,y],i]);last.d[i]=1}
@@ -373,7 +397,7 @@ return"<div class='mc'>"+row(m.h,m.gh)+row(m.a,m.ga)+(m.pen?"<div class='pn'>Def
 function view(){var h="";
 if(tab==0){h="<div class='g'>"+zt(0)+zt(1)+"</div>";
 if(stage=="reg")h+=cardL();
-if(last&&last.f!=fecha)h+="<div class='c'><h2>Resultados de la "+last.t.toLowerCase()+"</h2><div class='pg'>"+last.m.map(function(m){return"<div class='m'><span"+(m[2][0]>m[2][1]?" class='w2'":"")+">"+tm(m[0])+"</span><b>"+m[2][0]+" - "+m[2][1]+"</b><span"+(m[2][1]>m[2][0]?" class='w2'":"")+">"+tm(m[1])+"</span></div>"}).join("")+"</div></div>"}
+h+=navCard("AL"+tour,histPages(HL[tour],stage=="reg"?fecha:-1,tm),"Resultados · "+["Apertura","Clausura"][tour])}
 else if(tab==2){if(!PO)h="<div class='c'><p class='help'>Los playoffs empiezan cuando termina la fecha 16. Pasan los 8 primeros de cada zona (A1 = primero de la zona A).</p></div>";
 else{h+=cardLP();PO.forEach(function(r,i){h+="<div class='c'><h2>"+["⚔️ ","🔥 ","🏟️ ","🏆 "][i]+PO.names[i]+(i==3?" · cancha neutral":"")+"</h2><div class='pg'>"+r.map(mc).join("")+"</div></div>"})}}
 else if(tab==4){var po=promOrd(),q=rel(),hh="<tr><th>#</th><th class='n'>Equipo</th><th class='hm'>"+(YR-2)+"</th><th class='hm'>"+(YR-1)+"</th><th>"+YR+"</th><th>PJ</th><th>Prom.</th></tr>";
@@ -419,7 +443,7 @@ var FMP=[];function bP(neu){return neu?[.98,.98]:[1.12,.85]}
 function scoreP(h,a,neu){var b=bP(neu);return CORE.match((PE[h]-PE[a])/18,b[0],b[1],FMP[h],FMP[a])}
 function formP(h,a,x,y,neu){var b=bP(neu),f=CORE.form(FMP[h],FMP[a],x,y,(PE[h]-PE[a])/18,b[0],b[1]);FMP[h]=f[0];FMP[a]=f[1]}
 function playP(h,a,neu){var r=scoreP(h,a,neu);formP(h,a,r[0],r[1],neu);return r}
-function curP(){if(!lastP||lastP.f!=pf)lastP={t:"Fecha "+(pf+1)+(pf==6?" (interzonal)":""),f:pf,m:[],d:{}}}
+function curP(){if(!lastP||lastP.f!=pf){lastP={t:"Fecha "+(pf+1)+(pf==6?" (interzonal)":""),f:pf,m:[],d:{}};HP.push(lastP)}}
 function kP(i){return"P_"+pf+"_"+i}
 function recP(i,x,y){var m=FXP[pf][i];rec(2,m[0],m[1],x,y);formP(m[0],m[1],x,y);lastP.m.push([m[0],m[1],[x,y],i]);lastP.d[i]=1}
 function setKOP(m,x,y,neu){formP(m.h,m.a,x,y,neu);m.gh=x;m.ga=y;if(x==y){m.pen=1;m.w=Math.random()<0.5+(PE[m.h]-PE[m.a])/300?m.h:m.a}else m.w=x>y?m.h:m.a;m.l=m.w==m.h?m.a:m.h}
@@ -434,7 +458,7 @@ var rows=ms.map(function(m,mi){if(m.w!=null)return edDone(tp(m.h),tp(m.a),m.gh,m
 return"<div class='c'><h2>▶ "+pn[pr]+" · partidos</h2>"+ED_HELP+"<p class='fxh'>Si termina empatado se define por penales.</p><div class='pg2'>"+rows+"</div>"+edBar(P,"applyP()")+"</div>"}
 function kop(m,neu){var r=scoreP(m.h,m.a,neu);setKOP(m,r[0],r[1],neu)}
 function mk(x,y,K){return K[x]<=K[y]?{h:x,a:y}:{h:y,a:x}}
-function resetP(){FMP=[];RP=PT.map(function(){return{pj:0,g:0,e:0,p:0,gf:0,gc:0,pt:0}});R[2]=RP;tb2=PT.map(Math.random);PE=PT.map(function(x){return x.s+(Math.random()+Math.random()+Math.random()-1.5)*5});FXP=mkFixP();PS="reg";pf=0;pr=0;PP=null;lastP=null;pres=null;tab=0;drawP()}
+function resetP(){FMP=[];HP=[];RP=PT.map(function(){return{pj:0,g:0,e:0,p:0,gf:0,gc:0,pt:0}});R[2]=RP;tb2=PT.map(Math.random);PE=PT.map(function(x){return x.s+(Math.random()+Math.random()+Math.random()-1.5)*5});FXP=mkFixP();PS="reg";pf=0;pr=0;PP=null;lastP=null;pres=null;tab=0;drawP()}
 function stepP(){
 if(PS=="reg"){curP();var F=FXP[pf],pend=F.map(function(_,i){return i}).filter(function(i){return!lastP.d[i]});(ONE?pend.slice(0,1):pend).forEach(function(i){var k=kP(i),r=edGet(k);if(r)edClear(k);else r=scoreP(F[i][0],F[i][1]);recP(i,r[0],r[1])});if(lastP.m.length>=F.length)pf++;
 if(pf>=35){ZA=zoneP(0);ZB=zoneP(1);psd={};ZA.forEach(function(id,k){psd[id]=k});ZB.forEach(function(id,k){psd[id]=k+.5});PP=[[{h:ZA[0],a:ZB[0]}]];PS="po";pr=0;tab=2}return}
@@ -450,7 +474,7 @@ return"<div class='c'><h2>Zona "+(z?"B":"A")+"</h2><div class='sc'><table>"+h+"<
 function mcP(m){var pl=m.w!=null;function row(t,g){return"<div class='r"+(pl&&m.w==t?" w":"")+"'><span>"+tp(t)+"</span><b>"+(pl?g:"")+"</b></div>"}return"<div class='mc'>"+row(m.h,m.gh)+row(m.a,m.ga)+(m.pen?"<div class='pn'>Definido por penales</div>":"")+"</div>"}
 function viewP(){var h="";
 if(tab==0){h="<div class='g'>"+ztP(0)+ztP(1)+"</div>";if(PS=="reg")h+=cardP();
-if(lastP&&lastP.f!=pf)h+="<div class='c'><h2>Resultados de la "+lastP.t.toLowerCase()+"</h2><div class='pg'>"+lastP.m.map(function(m){return"<div class='m'><span"+(m[2][0]>m[2][1]?" class='w2'":"")+">"+tp(m[0])+"</span><b>"+m[2][0]+" - "+m[2][1]+"</b><span"+(m[2][1]>m[2][0]?" class='w2'":"")+">"+tp(m[1])+"</span></div>"}).join("")+"</div></div>"}
+h+=navCard("AP",histPages(HP,PS=="reg"?pf:-1,tp),"Resultados")}
 else if(!PP)h="<div class='c'><p class='help'>Los playoffs empiezan cuando terminan las 35 fechas: final entre los campeones de zona y Reducido del 2º al 8º.</p></div>";
 else{h+=cardPP();PP.forEach(function(r,i){h+="<div class='c'><h2>"+["🏆 ","⚔️ ","🔥 ","🏟️ ","🥈 "][i]+pn[i]+(i==0||i==4?" · cancha neutral":"")+"</h2><div class='pg'>"+r.map(mcP).join("")+"</div></div>"})}
 return h}
@@ -559,7 +583,7 @@ return"<div class='c'><h2>"+tb.t+"</h2><div class='sc'><table>"+h+"</table></div
 function viewG(K){var h="",R=K.rounds[K.ri],i;
 if(tab==0&&K.tabs.length){h="<div class='g'>"+K.tabs.map(function(t){return ztG(K,t)}).join("")+"</div><p class='lg' style='margin:6px 2px 12px'>"+K.leg+"</p>";
 if(!K.done&&!R.ko)h+=cardG(K,R);
-var pv=K.rounds[K.ri-1];if(pv&&!pv.ko)h+="<div class='c'><h2>Resultados · "+pv.nm+"</h2>"+pv.ms.map(function(m,mi){return mrow(K,m,K.ri-1,mi)}).join("")+"</div>";
+h+=navCard("G"+K.id,K.rounds.map(function(r,ri){return{r:r,ri:ri}}).filter(function(o){return!o.r.ko&&o.r.ms.length&&o.r.ms.every(function(m){return m.w!=null})}).map(function(o){return{t:o.r.nm,h:"<div class='pg'>"+o.r.ms.map(function(m,mi){return mrow(K,m,o.ri,mi)}).join("")+"</div>"}}),"Resultados");
 if(!K.done&&R.ko)h+="<div class='c'><p class='help'>Ya empezaron los playoffs: mirá la pestaña Llaves.</p></div>"}
 else{if(!K.done&&R.ko)h+=cardG(K,R);K.rounds.forEach(function(r,ri){if(r.ko)h+="<div class='c'><h2>"+(ri==K.ri&&!K.done?"▶ ":"")+r.nm+(r.neu?" · cancha neutral":"")+"</h2><div class='pg'>"+r.ms.map(function(m,mi){return mcG(K,m,ri,mi)}).join("")+"</div></div>"});
 if(!h)h="<div class='c'><p class='help'>Todavía no empezaron las llaves. Se juegan al terminar la fase regular.</p></div>"}
@@ -634,8 +658,9 @@ sr2:{n:'Segunda RFEF G2',g:1,b:[1,5],r:3,dir:1,po:[1,4],l1:'Ascenso directo (cam
 sr3:{n:'Segunda RFEF G3',g:1,b:[1,5],r:3,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'la Primera RFEF',dn:'la Tercera RFEF'},
 sr4:{n:'Segunda RFEF G4',g:1,b:[1,5],r:3,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'la Primera RFEF',dn:'la Tercera RFEF'},
 sr5:{n:'Segunda RFEF G5',g:1,b:[1,5],r:3,dir:1,po:[1,4],l1:'Ascenso directo (campeón)',l2:'Playoffs (2º a 5º): el ganador asciende',up:'la Primera RFEF',dn:'la Tercera RFEF'}};
+const MADRID=0.35;
 const mk=G=>a=>({n:a[0],pts:a[1],gd:a[2],g:a[3]||G,adj:a[4]||0,m:1.4,s:0});
-const S={fx:{},sched:{},country:'en',season:1,ph:'ready',res:null,cur:'pl',tot:{pl:38,ch:46,l1:46,l2:46,nl:46,nln:46,nls:46,npl:42,isth:42,slc:42,sls:42,esp:38,seg:42,pf1:38,pf2:38,sr1:34,sr2:34,sr3:34,sr4:34,sr5:34},L:{
+const S={fx:{},sched:{},log:{},cups:{},country:'en',season:1,ph:'ready',res:{},cur:'pl',tot:{pl:38,ch:46,l1:46,l2:46,nl:46,nln:46,nls:46,npl:42,isth:42,slc:42,sls:42,esp:38,seg:42,pf1:38,pf2:38,sr1:34,sr2:34,sr3:34,sr4:34,sr5:34},L:{
 pl:{t:[["Arsenal",27,10,10],["Brighton",22,19,10],["Manchester City",21,8,10],["Liverpool",18,4,10],["Chelsea",16,3,10],["Everton",16,2,10],["Bournemouth",15,2,10],["Brentford",14,5,10],["Leeds United",14,2,10],["Aston Villa",13,-3,10],["Tottenham",12,-1,10],["Newcastle",12,-3,10],["Hull City",11,0,10],["Ipswich Town",11,-5,10],["Fulham",10,-2,10],["Nottingham Forest",9,-4,10],["Coventry City",9,-9,10],["Manchester United",8,-5,10],["Sunderland",8,-9,10,0.45],["Crystal Palace",7,-14,10]].map(mk(10))},
 ch:{t:[["Middlesbrough",28,11],["Wolverhampton",27,8],["Birmingham City",26,13],["Stoke City",26,5],["Swansea City",26,5],["West Bromwich",25,5],["Southampton",24,15],["West Ham",23,15],["Sheffield United",22,3],["Portsmouth",22,3],["QPR",21,5],["Norwich City",18,3],["Millwall",18,-1],["Blackburn",18,-2],["Bristol City",18,-3],["Wrexham",17,-2],["Bolton",17,-7],["Cardiff City",15,-1],["Lincoln City",15,-10],["Watford",14,-10],["Charlton",14,-11],["Burnley",10,-8],["Derby County",7,-18],["Preston",5,-18]].map(mk(14))},
 l1:{t:[["Huddersfield",29,16,14],["Stockport County",26,12,14],["Oxford United",26,11,13],["Luton Town",24,6,14],["Plymouth Argyle",23,2,14],["Reading",22,10,14],["Bradford City",22,2,13],["Cambridge United",21,0,14],["Sheffield Wednesday",20,8,13],["Leicester City",19,3,13],["Mansfield Town",19,2,13],["MK Dons",18,2,13],["Wycombe",18,-2,13],["Leyton Orient",17,5,13],["Burton Albion",17,-3,14],["Stevenage",16,4,12],["Notts County",14,-1,12],["AFC Wimbledon",13,-12,13],["Blackpool",12,-4,12],["Doncaster",12,-8,13],["Wigan Athletic",11,-11,14],["Peterborough",10,-12,13],["Barnsley",9,-10,12],["Bromley",9,-20,13]].map(mk(14))},
@@ -647,7 +672,7 @@ npl:{t:[["Cleethorpes Town",19,18],["Avro",19,10],["Redcar Athletic",18,11],["Wa
 isth:{t:[["Enfield Town",34,27,14],["Welling United",33,16,15],["Eastbourne Borough",31,14,14],["Lewes",27,5,15],["Dartford",27,2,15],["St Albans City",23,8,12],["Ramsgate",22,10,14],["Wingate & Finchley",22,1,14],["Carshalton Athletic",22,-9,16],["Leatherhead",21,6,13],["Chatham Town",21,4,14],["Dulwich Hamlet",21,-1,15],["Burgess Hill Town",21,-2,15],["Aveley",20,1,15],["AFC Whyteleafe",18,-1,15],["Cheshunt",18,-6,15],["Maldon & Tiptree",17,-16,17],["Cray Wanderers",15,8,10],["Brentwood Town",15,-3,14],["Three Bridges",9,-15,14],["Stanway Rovers",7,-26,15],["Whitehawk",6,-23,15]].map(mk(14))},
 slc:{t:[["Real Bedford",38,21,17],["Bury Town",35,5,17],["Bromsgrove Sporting",34,15,15],["Kettering Town",31,13,16],["Needham Market",28,12,16],["Peterborough Sports",27,6,16],["Rushall Olympic",27,4,17],["Alvechurch",26,14,14],["Anstey Nomads",26,8,15],["Halesowen Town",23,0,14],["Stourbridge",22,-1,15],["Racing Club Warwick",20,1,16],["Stratford Town",19,-5,16],["Redditch United",18,1,14],["Hitchin Town",16,-4,16],["Leiston",15,-4,14],["Banbury United",14,-11,16],["Worcester City",13,-2,13],["Leamington",13,-8,16],["Bishop's Stortford",13,-11,16],["Leighton Town",6,-19,15],["Stamford",5,-35,16]].map(mk(14))},
 sls:{t:[["Uxbridge",33,17,15],["Poole Town",32,11,16],["Hanworth Villa",31,13,16],["Plymouth Parkway",29,13,15],["Bath City",29,9,15],["Chichester City",28,3,16],["Chertsey Town",26,9,15],["Gosport Borough",24,3,16],["Wimborne Town",22,13,13],["Frome Town",20,3,15],["Taunton Town",19,6,13],["Berkhamsted",18,-2,14],["Hanwell Town",17,-2,15],["Sholing",16,-2,13],["Basingstoke Town",16,-7,16],["Evesham United",16,-13,16],["Yate Town",15,-11,15],["Chippenham Town",15,-12,15],["Bracknell Town",15,-18,17],["Malvern Town",14,-16,15],["Gloucester City",12,-4,13],["Havant & Waterlooville",12,-13,16]].map(mk(14))},
-esp:{t:[["Barcelona",33,35,12],["Real Madrid",30,21,12,0.25],["Atlético Madrid",28,13,12],["Real Betis",26,5,12],["Real Sociedad",22,1,12],["Sevilla",18,-2,12],["Athletic Club",16,4,11],["Villarreal",15,2,12],["Deportivo",15,1,12],["Racing Santander",14,-13,12],["Celta",13,0,12],["Alavés",13,-2,12],["Espanyol",12,-1,12],["Rayo Vallecano",12,-6,11],["Getafe",12,-10,12],["Osasuna",12,-11,12],["Levante",11,-5,12],["Elche",10,-6,12],["Valencia",9,-12,12],["Málaga",5,-14,12]].map(mk(12))},
+esp:{t:[["Barcelona",33,35,12],["Real Madrid",30,21,12,MADRID],["Atlético Madrid",28,13,12],["Real Betis",26,5,12],["Real Sociedad",22,1,12],["Sevilla",18,-2,12],["Athletic Club",16,4,11],["Villarreal",15,2,12],["Deportivo",15,1,12],["Racing Santander",14,-13,12],["Celta",13,0,12],["Alavés",13,-2,12],["Espanyol",12,-1,12],["Rayo Vallecano",12,-6,11],["Getafe",12,-10,12],["Osasuna",12,-11,12],["Levante",11,-5,12],["Elche",10,-6,12],["Valencia",9,-12,12],["Málaga",5,-14,12]].map(mk(12))},
 seg:{t:[["Almería",29,14,13],["Castellón",27,18,12],["Burgos",24,5,13],["Eibar",23,7,12],["Granada",23,6,12],["Mallorca",22,8,12],["Sporting Gijón",22,-2,13],["Girona",21,10,13],["Real Oviedo",21,3,13],["Córdoba",19,0,13],["Valladolid",18,3,13],["Sabadell",17,1,12],["Las Palmas",17,-4,12],["Tenerife",15,-2,12],["Eldense",14,-4,12],["Celta Fortuna",13,-6,13],["Leganés",12,-12,13],["Andorra",11,-5,12],["Real Sociedad B",11,-7,12],["Cádiz",10,-2,13],["Albacete",10,-11,13],["Ceuta",5,-20,13]].map(mk(12))},
 pf1:{t:[["Lugo",28,10,11],["Logroñés",23,8,11],["Pontevedra",18,2,11],["Real Avilés",17,8,11],["Mirandés",17,3,10],["Racing Ferrol",17,1,11],["Extremadura 1924",16,6,11],["Athletic Club II",15,4,10],["Cacereño",15,0,11],["Barakaldo",14,0,11],["Ponferradina",14,0,10],["Mérida AD",13,2,10],["Real Unión",13,0,11],["Unionistas",13,-5,11],["Cultural Leonesa",12,0,10],["Zamora",12,-2,11],["Deportivo II",11,-6,10],["Coria",9,-5,10],["Ourense",8,-12,11],["Arenas Getxo",8,-14,10]].map(mk(12))},
 pf2:{t:[["Zaragoza",24,9,11],["Villarreal II",22,11,11],["Real Jaén",19,4,11],["Real Murcia",19,4,10],["Alcorcón",18,9,11],["Ibiza",18,4,11],["Cartagena",16,3,11],["Hércules",16,-1,10],["Real Madrid II",15,2,10],["Huesca",15,0,11],["Gimnàstic",15,-1,11],["Antequera",14,2,11],["Sant Andreu",13,0,11],["Algeciras",13,-1,10],["Atlético Madrid II",12,2,11],["Águilas",9,-6,11],["Juventud Torremolinos",8,-9,11],["Europa",8,-12,11],["Rayo Majadahonda",7,-7,11],["Teruel",7,-13,11]].map(mk(12))},
@@ -666,11 +691,12 @@ const CU={car:'Carabao Cup',fa:'FA Cup',tr:'EFL Trophy',ft:'FA Trophy',cr:'Copa 
 const TO={pl:0,ch:-1.1,l1:-1.8,l2:-2.3,nl:-2.7,nln:-3.05,nls:-3.05,npl:-3.35,isth:-3.35,slc:-3.35,sls:-3.35,esp:0,seg:-1,pf1:-1.65,pf2:-1.65,sr1:-2.15,sr2:-2.15,sr3:-2.15,sr4:-2.15,sr5:-2.15};
 // azar de temporada: cada año un equipo puede rendir algo mejor o peor de lo que dicen sus números (fichajes, DT, lesiones).
 // Si la liga ya va avanzada, el azar es menor porque la tabla ya mostró cómo viene.
-function SV(x,T){return CORE.gauss()*.15*Math.max(0,1-(x.g||0)/T)}
+function SV(x,T){const r=Math.max(0,1-(x.g||0)/T);return CORE.gauss()*.15*r*r}
 const str=x=>x.s+(x.v||0);
 const pois=CORE.pois;
 const RN=n=>({2:'Final',4:'Semifinales',8:'Cuartos de final',16:'Octavos de final',32:'Dieciseisavos'}[n]||'Ronda de '+n);
-const BT=()=>S.ph=='ready'?'▶ Simular temporada '+S.season+' (ligas y copas)':'➡️ Empezar temporada '+(S.season+1)+' (con ascensos y descensos)';
+const BT=()=>{const k=S.cur;return compDone(k)?'⏭ Empezar temporada '+(S.season+1)+' (con ascensos y descensos)':'▶ Simular '+(CU[k]?'la '+CU[k]:C[k].n+' · resto de la temporada')};
+const HP=()=>{$('hp').textContent=compDone(S.cur)?'Al pasar de temporada, las ligas y copas que todavía no simulaste se simulan solas.':'Simula solo esta competencia; las demás siguen como están.'};
 function kmatch(a,b,two,neu){const df=str(a)+a.o-str(b)-b.o,bh=neu?1.3:1.45,ba=neu?1.3:1.1;
 let [x,y]=CORE.match(df,bh,ba,a.fm,b.fm),et=0,pen=0;
 if(two){const [q,p]=CORE.match(-df,1.52,1.17,b.fm,a.fm);x+=p;y+=q}
@@ -701,38 +727,44 @@ for(let q=rem.length-1;q>=0;q--){const [i,j]=rem[q];if(need[i]>0&&need[j]>0){nee
 const miss=need.reduce((a,b)=>a+b,0);if(!best||miss<best.miss)best={miss,rem};if(!miss)break}
 return best.rem.map(([i,j])=>({h:t[i],a:t[j]}))}
 function sched(k){return S.sched[k]||(S.sched[k]=buildSched(k))}
-function sim(k){const L=S.L[k],t=L.t,n=t.length,pt=t.map(x=>x.pts),gd=t.map(x=>x.gd),fm=t.map(x=>x.fm||0),ix=new Map(t.map((x,i)=>[x,i]));
-for(const p of sched(k)){const i=ix.get(p.h),j=ix.get(p.a);if(i==null||j==null)continue;const D=str(t[i])-str(t[j]),[a,b]=CORE.match(D,1.52,1.17,fm[i],fm[j]),f=CORE.form(fm[i],fm[j],a,b,D,1.52,1.17);fm[i]=f[0];fm[j]=f[1];
-gd[i]+=a-b;gd[j]+=b-a;if(a>b)pt[i]+=3;else if(a<b)pt[j]+=3;else{pt[i]++;pt[j]++}}
-const o=[...Array(n).keys()].sort((x,y)=>pt[y]-pt[x]||gd[y]-gd[x]||Math.random()-.5);return{pt,gd,o}}
+function sim(k){const L=S.L[k],t=L.t,n=t.length,pt=t.map(x=>x.pts),gd=t.map(x=>x.gd),fm=t.map(x=>x.fm||0),ix=new Map(t.map((x,i)=>[x,i])),rounds=[];
+let left=[...sched(k)],jn=1+Math.round(t.reduce((a,x)=>a+x.g,0)/n);const lg=S.log[k];if(lg&&lg.length)jn=Math.max(jn,lg[lg.length-1].n+1);
+while(left.length){const used=new Set(),rd=[],rest=[];for(const p of left){if(used.has(p.h)||used.has(p.a)){rest.push(p);continue}used.add(p.h);used.add(p.a);rd.push(p)}
+const ms=[];for(const p of rd){const i=ix.get(p.h),j=ix.get(p.a);if(i==null||j==null)continue;const D=str(t[i])-str(t[j]),[a,b]=CORE.match(D,1.52,1.17,fm[i],fm[j]),f=CORE.form(fm[i],fm[j],a,b,D,1.52,1.17);fm[i]=f[0];fm[j]=f[1];
+gd[i]+=a-b;gd[j]+=b-a;if(a>b)pt[i]+=3;else if(a<b)pt[j]+=3;else{pt[i]++;pt[j]++}ms.push({h:p.h,a:p.a,x:a,y:b})}rounds.push({n:jn++,ms});left=rest}
+const o=[...Array(n).keys()].sort((x,y)=>pt[y]-pt[x]||gd[y]-gd[x]||Math.random()-.5);return{pt,gd,o,rounds}}
 function game(t,a,b){const df=str(t[a])-str(t[b]),[x,y]=CORE.match(df,1.25,1.25,t[a].fm,t[b].fm);return x>y?a:x<y?b:(Math.random()<.5+.1*Math.max(-3,Math.min(3,df))?a:b)}
 function playoffs(t,o,st,n){const s=o.slice(st,st+n);let s1,s2;
 if(n==6){const a=game(t,s[2],s[5]),b=game(t,s[3],s[4]),lo=o.indexOf(a)>o.indexOf(b)?a:b,hi=lo==a?b:a;s1=game(t,s[0],lo);s2=game(t,s[1],hi)}
 else{s1=game(t,s[0],s[3]);s2=game(t,s[1],s[2])}
 return{f:[s1,s2],w:game(t,s1,s2)}}
-function cups(r){for(const k of [...K,...KS])S.L[k].t.forEach(x=>x.o=TO[k]);
-const T=k=>S.L[k].t,step3=['npl','isth','slc','sls'].flatMap(T),ns=[...T('nln'),...T('nls')],efl=[...T('ch'),...T('l1'),...T('l2')];
-const top7=[...T('pl')].sort((a,b)=>str(b)-str(a)).slice(0,7),pl13=T('pl').filter(x=>!top7.includes(x));
-const c={
+function setO(){for(const k of [...K,...KS])S.L[k].t.forEach(x=>x.o=TO[k])}
+// simula una sola copa
+function simCup(k){setO();const T=k=>S.L[k].t,step3=['npl','isth','slc','sls'].flatMap(T),ns=[...T('nln'),...T('nls')],efl=[...T('ch'),...T('l1'),...T('l2')];let c=null;
 // FA Cup: el no-league juega las rondas previas, League One y Two entran en la primera ronda, Premier y Championship en la tercera
-fa:cupRun([{add:[...step3,...ns],to:40,nm:i=>'Fase previa · ronda '+i},{add:T('nl'),to:32,nm:()=>'Cuarta ronda previa'},{add:[...T('l1'),...T('l2')],to:40,nm:()=>'Primera ronda'},{add:[],to:20,nm:()=>'Segunda ronda'},{add:[...T('pl'),...T('ch')],to:32,nm:()=>'Tercera ronda'}],0),
+if(k=='fa')c=cupRun([{add:[...step3,...ns],to:40,nm:i=>'Fase previa · ronda '+i},{add:T('nl'),to:32,nm:()=>'Cuarta ronda previa'},{add:[...T('l1'),...T('l2')],to:40,nm:()=>'Primera ronda'},{add:[],to:20,nm:()=>'Segunda ronda'},{add:[...T('pl'),...T('ch')],to:32,nm:()=>'Tercera ronda'}],0);
 // Carabao: la EFL y la mayoría de la Premier arrancan en la primera ronda; los 7 más fuertes (los que juegan en Europa) entran en la tercera
-car:cupRun([{add:[...efl,...pl13],to:25,nm:i=>i==1?'Primera ronda':'Segunda ronda'},{add:top7,to:16,nm:()=>'Tercera ronda'}],1),
+else if(k=='car'){const top7=[...T('pl')].sort((a,b)=>str(b)-str(a)).slice(0,7),pl13=T('pl').filter(x=>!top7.includes(x));c=cupRun([{add:[...efl,...pl13],to:25,nm:i=>i==1?'Primera ronda':'Segunda ronda'},{add:top7,to:16,nm:()=>'Tercera ronda'}],1)}
 // FA Trophy: Step 3 y National League Norte/Sur primero; la National League entra en la tercera ronda
-ft:cupRun([{add:[...step3,...ns],to:40,nm:i=>'Ronda previa '+i},{add:T('nl'),to:32,nm:()=>'Tercera ronda'}],0),
-tr:cupRun([{add:[...T('l1'),...T('l2')],to:32,nm:()=>'Fase previa'}],0)};
-if(S.prev){const A=S.prev.champ;let B=S.prev.faw;if(A==B)B=S.prev.ru;c.sh={m:kmatch(A,B,0,1)}}
-const pl=S.L.pl.t,o=r.pl.o;S.next={champ:pl[o[0]],ru:pl[o[1]],faw:c.fa.w};
+else if(k=='ft')c=cupRun([{add:[...step3,...ns],to:40,nm:i=>'Ronda previa '+i},{add:T('nl'),to:32,nm:()=>'Tercera ronda'}],0);
+else if(k=='tr')c=cupRun([{add:[...T('l1'),...T('l2')],to:32,nm:()=>'Fase previa'}],0);
+else if(k=='sh'){if(!S.prev)return;const A=S.prev.champ;let B=S.prev.faw;if(A==B)B=S.prev.ru;c={m:kmatch(A,B,0,1)}}
 // Copa del Rey: los 4 de la Supercopa entran en dieciseisavos; en partido único juega de local el de menor categoría
-{const E=S.L.esp.t,sc4=S.prevE?[...new Set(S.prevE)].filter(x=>E.includes(x)).slice(0,4):[];[...E].sort((a,b)=>str(b)-str(a)).forEach(x=>{if(sc4.length<4&&!sc4.includes(x))sc4.push(x)});
-const rest=[...E.filter(x=>!sc4.includes(x)),...S.L.seg.t,...S.L.pf1.t,...S.L.pf2.t];
-c.cr=cupRun([{add:rest,to:28,nm:i=>i==1?'Primera ronda':'Segunda ronda'},{add:sc4,to:16,nm:()=>'Dieciseisavos'}],1,1)}
-{const E=S.L.esp.t,Ro=r.esp.o,cf=c.cr.f.a==c.cr.w?c.cr.f.b:c.cr.f.a;S.nextE=[E[Ro[0]],E[Ro[1]],c.cr.w,cf];
-if(S.prevE){const u=[...new Set(S.prevE)];for(const i of Ro){if(u.length>=4)break;if(!u.includes(E[i]))u.push(E[i])}
-const m1=kmatch(u[0],u[3],0,1),m2=kmatch(u[1],u[2],0,1),f=kmatch(m1.w,m2.w,0,1);c.sc={rounds:[{n:'Semifinales',ms:[m1,m2]},{n:'Final',ms:[f]}],w:f.w,f}}}
-S.cups=c}
-function finish(){for(const k of [...K,...KS])if(S.fx[k])applyFx(k,1);S.snap=ser();const r={};for(const k of [...K,...KS]){const c=C[k],R=sim(k);R.up=R.o.slice(0,c.dir);if(c.po){R.po=playoffs(S.L[k].t,R.o,c.po[0],c.po[1]);R.up.push(R.po.w)}r[k]=R}S.res=r;cups(r);S.ph='done'}
-function advance(){const r=S.res,up={},dn={},kp={},ad=(a,d)=>a.map(x=>(x.s+=d,x.m=(x.m||1.4)+d,x)),mv=(a,f,t)=>ad(a,TO[f]-TO[t]);
+else if(k=='cr'){const E=S.L.esp.t,sc4=S.prevE?[...new Set(S.prevE)].filter(x=>E.includes(x)).slice(0,4):[];[...E].sort((a,b)=>str(b)-str(a)).forEach(x=>{if(sc4.length<4&&!sc4.includes(x))sc4.push(x)});
+const rest=[...E.filter(x=>!sc4.includes(x)),...S.L.seg.t,...S.L.pf1.t,...S.L.pf2.t];c=cupRun([{add:rest,to:28,nm:i=>i==1?'Primera ronda':'Segunda ronda'},{add:sc4,to:16,nm:()=>'Dieciseisavos'}],1,1)}
+// Supercopa: campeón y subcampeón de LaLiga + campeón y finalista de la Copa del Rey de la temporada anterior
+else if(k=='sc'){if(!S.prevE)return;const E=S.L.esp.t,u=[...new Set(S.prevE)].filter(x=>E.includes(x));[...E].sort((a,b)=>str(b)-str(a)).forEach(x=>{if(u.length<4&&!u.includes(x))u.push(x)});
+const m1=kmatch(u[0],u[3],0,1),m2=kmatch(u[1],u[2],0,1),f=kmatch(m1.w,m2.w,0,1);c={rounds:[{n:'Semifinales',ms:[m1,m2]},{n:'Final',ms:[f]}],w:f.w,f}}
+if(c)S.cups[k]=c}
+const CUPS=['car','fa','tr','ft','sh','cr','sc'];
+// simula una sola liga (el resto de su temporada)
+function simLeague(k){if(S.fx[k])applyFx(k,1);const c=C[k],R=sim(k);R.up=R.o.slice(0,c.dir);if(c.po){R.po=playoffs(S.L[k].t,R.o,c.po[0],c.po[1]);R.up.push(R.po.w)}S.res[k]=R;NAV['EU'+k]=null}
+function compDone(k){return CU[k]?(!!S.cups[k]||(k=='sh'&&!S.prev)||(k=='sc'&&!S.prevE)):!!S.res[k]}
+function simAll(){let n=0;for(const k of [...K,...KS])if(!S.res[k]){simLeague(k);n++}for(const k of CUPS)if(!S.cups[k]){simCup(k);if(S.cups[k])n++}return n}
+function advance(){const nAuto=simAll();{const pl=S.L.pl.t,o=S.res.pl.o;S.next={champ:pl[o[0]],ru:pl[o[1]],faw:S.cups.fa.w};
+const E=S.L.esp.t,Ro=S.res.esp.o,cr=S.cups.cr,cf=cr.f.a==cr.w?cr.f.b:cr.f.a;S.nextE=[E[Ro[0]],E[Ro[1]],cr.w,cf]}
+say(nAuto?'Se simularon solas las '+nAuto+' competencias que faltaban.':'');
+const r=S.res,up={},dn={},kp={},ad=(a,d)=>a.map(x=>(x.s+=d,x.m=(x.m||1.4)+d,x)),mv=(a,f,t)=>ad(a,TO[f]-TO[t]);
 for(const k of K){const L=S.L[k],T=S.tot[k];L.t.forEach((x,i)=>{const m=x.m||1.4;x.s=m+.75*(.65*x.s+.35*(r[k].pt[i]/T+.25*r[k].gd[i]/T)-m)});
 up[k]=r[k].up.map(i=>L.t[i]);dn[k]=r[k].o.slice(-C[k].r).map(i=>L.t[i]);kp[k]=L.t.filter(x=>!up[k].includes(x)&&!dn[k].includes(x))}
 const P=n=>Array.from({length:n},()=>pool.shift()),dnN=[dn.nl[0],dn.nl[3]],dnS=[dn.nl[1],dn.nl[2]];
@@ -751,7 +783,7 @@ const P1=D.pf1,P2=D.pf2;
 Lg.sr1.t=[...Kp.sr1,...mv(P1.slice(0,2),'pf1','sr1'),...Q(3)];Lg.sr2.t=[...Kp.sr2,...mv(P1.slice(2,4),'pf1','sr2'),...Q(3)];Lg.sr3.t=[...Kp.sr3,...mv([P1[4],P2[0]],'pf1','sr3'),...Q(3)];Lg.sr4.t=[...Kp.sr4,...mv(P2.slice(1,3),'pf2','sr4'),...Q(3)];Lg.sr5.t=[...Kp.sr5,...mv(P2.slice(3,5),'pf2','sr5'),...Q(3)];
 poolP.push(...D.sr1,...D.sr2,...D.sr3,...D.sr4,...D.sr5)}
 for(const k of [...K,...KS])S.L[k].t.forEach(x=>{x.pts=0;x.gd=0;x.g=0;x.v=SV(x,1);x.fm=0});
-S.season++;S.ph='ready';S.res=null;S.cups=null;S.prev=S.next;S.prevE=S.nextE;S.fx={};S.sched={};DRclear()}
+S.season++;S.ph='ready';S.res={};S.cups={};S.log={};S.prev=S.next;S.prevE=S.nextE;S.fx={};S.sched={};DRclear()}
 function zone(p,k){const n=S.L[k].t.length,c=C[k];if(p>=n-c.r)return'z3';if(p<c.g)return'z1';if(p>=c.b[0]&&p<c.b[1])return'z2';return''}
 function base(L){const n=L.t.length,pl=L.t[0].g>0;return[...Array(n).keys()].sort((x,y)=>pl?(L.t[y].pts-L.t[x].pts||L.t[y].gd-L.t[x].gd):L.t[y].s-L.t[x].s)}
 // la próxima jornada: los primeros partidos pendientes del fixture, sin repetir equipo
@@ -762,13 +794,16 @@ const fxKey=(k,f,i)=>'E'+k+'_'+f.id+'_'+i;
 function recE(h,a,x,y){h.g++;a.g++;h.gd+=x-y;a.gd+=y-x;if(x>y)h.pts+=3;else if(x<y)a.pts+=3;else{h.pts++;a.pts++}
 const D=str(h)-str(a),f=CORE.form(h.fm,a.fm,x,y,D,1.52,1.17);h.fm=f[0];a.fm=f[1]}
 // aplica los resultados cargados; los que quedaron vacíos siguen pendientes
-function applyFx(k,quiet){const F=S.fx[k];if(!F)return 0;let n=0;F.m.forEach((p,i)=>{const key=fxKey(k,F,i),r=edGet(key);if(!r)return;recE(p.h,p.a,r[0],r[1]);const q=S.sched[k].indexOf(p);if(q>=0)S.sched[k].splice(q,1);edClear(key);n++});if(!quiet)fxRound(k);return n}
+function applyFx(k,quiet){const F=S.fx[k];if(!F)return 0;let n=0;F.m.forEach((p,i)=>{const key=fxKey(k,F,i),r=edGet(key);if(!r)return;recE(p.h,p.a,r[0],r[1]);{const lg=S.log[k]||(S.log[k]=[]);let j=lg.find(q=>q.n==F.n);if(!j){j={n:F.n,ms:[]};lg.push(j)}j.ms.push({h:p.h,a:p.a,x:r[0],y:r[1]})}const q=S.sched[k].indexOf(p);if(q>=0)S.sched[k].splice(q,1);edClear(key);n++});if(!quiet)fxRound(k);return n}
 window.EUapply=k=>{const n=applyFx(k);if(!n)say('Cargá o simulá al menos un resultado antes de aplicar.');else say('');draw()};
-function fxDraw(k){const el=$('fxv');if(S.res||S.ph!='ready'){el.innerHTML='';return}
+function fxDraw(k){const el=$('fxv');if(S.res[k]){el.innerHTML=histCard(k);return}
 if(!S.fx[k]||!S.fx[k].m.length)fxRound(k);const F=S.fx[k],P='E'+k;edStart(P);
-if(!F.m.length){el.innerHTML='<div class="rd"><h3>Partidos</h3><div class="mt" style="display:block;color:var(--mut)">No quedan partidos por jugar en esta liga.</div></div>';return}
+if(!F.m.length){el.innerHTML='<div class="rd"><h3>Partidos</h3><div class="mt" style="display:block;color:var(--mut)">No quedan partidos por jugar en esta liga.</div></div>'+histCard(k);return}
 const left=sched(k).length;
-el.innerHTML=`<div class="rd"><h3>Partidos · jornada ${F.n} <small>· quedan ${left} partidos en la liga</small></h3>`+ED_HELP+F.m.map((p,i)=>edRow(P,fxKey(k,F,i),crest(p.h.n)+p.h.n,crest(p.a.n)+p.a.n,()=>CORE.match(str(p.h)-str(p.a),1.52,1.17,p.h.fm,p.a.fm))).join('')+edBar(P,"EUapply('"+k+"')")+`</div>`}
+el.innerHTML=`<div class="rd"><h3>Partidos · jornada ${F.n} <small>· quedan ${left} partidos en la liga</small></h3>`+ED_HELP+F.m.map((p,i)=>edRow(P,fxKey(k,F,i),crest(p.h.n)+p.h.n,crest(p.a.n)+p.a.n,()=>CORE.match(str(p.h)-str(p.a),1.52,1.17,p.h.fm,p.a.fm))).join('')+edBar(P,"EUapply('"+k+"')")+`</div>`+histCard(k)}
+const mtRow=m=>`<div class="mt"><span class="a ${m.x>m.y?'w':''}">${crest(m.h.n)}${m.h.n}</span><span class="sc">${m.x}-${m.y}</span><span class="${m.y>m.x?'w':''}">${crest(m.a.n)}${m.a.n}</span></div>`;
+function histCard(k){const lg=S.log[k]||[],sm=S.res[k]?S.res[k].rounds:[];
+return navCard('EU'+k,[...lg.map(r=>({t:'Jornada '+r.n,h:r.ms.map(mtRow).join('')})),...sm.map(r=>({t:'Jornada '+r.n+' · simulada',h:r.ms.map(mtRow).join('')}))],'Resultados')}
 function DRclear(){for(const q in DR)if(q[0]=='E')delete DR[q]}
 const CCL={Arsenal:['#ef0107','#fff'],'Manchester City':['#6cabdd','#fff'],Brighton:['#0057b8','#fff'],Chelsea:['#034694','#fff'],Liverpool:['#c8102e','#c8102e'],Brentford:['#e30613','#fff'],Everton:['#003399','#fff'],Bournemouth:['#da291c','#111'],Tottenham:['#fff','#132257'],'Aston Villa':['#670e36','#95bfe5'],'Hull City':['#f5a12d','#111'],'Leeds United':['#fff','#1d428a'],Newcastle:['#111','#fff'],'Ipswich Town':['#0044a9','#fff'],Fulham:['#fff','#111'],'Coventry City':['#59cbe8','#fff'],'Manchester United':['#da291c','#111'],'Crystal Palace':['#1b458f','#c4122e'],'Nottingham Forest':['#dd0000','#fff'],Sunderland:['#eb172b','#fff'],'West Ham':['#7a263a','#1bb1e7'],Wolverhampton:['#fdb913','#231f20'],Southampton:['#d71920','#fff'],Middlesbrough:['#e11b22','#fff'],'Birmingham City':['#0000ff','#fff'],'Stoke City':['#e03a3e','#fff'],'Swansea City':['#fff','#111'],'West Bromwich':['#122f67','#fff'],'Sheffield United':['#ee2737','#fff'],Portsmouth:['#001489','#fff'],'Leicester City':['#003090','#fdbe11'],Burnley:['#6c1d45','#99d6ea'],Wrexham:['#d71920','#fff'],Barcelona:['#a50044','#004d98'],'Real Madrid':['#fff','#febe10'],'Atlético Madrid':['#cb3524','#fff'],'Real Betis':['#0bb363','#fff'],'Real Sociedad':['#0067b1','#fff'],Sevilla:['#fff','#d80027'],'Athletic Club':['#ee2523','#fff'],Deportivo:['#1d4f9c','#fff'],'Racing Santander':['#fff','#0a7a3c'],Villarreal:['#ffe667','#005187'],Celta:['#8ac3ee','#fff'],'Alavés':['#0761af','#fff'],Getafe:['#005999','#fff'],Espanyol:['#007fc8','#fff'],'Rayo Vallecano':['#fff','#e53027'],Osasuna:['#d91a21','#0a346f'],Levante:['#004d98','#b4053f'],Elche:['#fff','#05642c'],Valencia:['#fff','#111'],'Málaga':['#0090d4','#fff'],Zaragoza:['#fff','#0047ab'],Mallorca:['#e20613','#111'],Girona:['#e30613','#fff'],'Las Palmas':['#ffe400','#0055a5'],'Real Oviedo':['#0047ab','#fff'],'Sporting Gijón':['#e30613','#fff'],Valladolid:['#5e2a84','#fff'],'Cádiz':['#ffe500','#0047ab'],Granada:['#e30613','#fff'],'Almería':['#e30613','#fff']};
 const crest=n=>{const c=CCL[n];if(c)return`<i class="bd" style="background:linear-gradient(135deg,${c[0]} 50%,${c[1]} 50%)"></i>`;let h=0;for(let k=0;k<n.length;k++)h=(h*31+n.charCodeAt(k))%360;return`<i class="bd" style="background:hsl(${h},55%,48%)"></i>`};
@@ -785,14 +820,14 @@ S.prev=d.prev&&f(d.prev.c)&&f(d.prev.f)&&f(d.prev.r)?{champ:f(d.prev.c),faw:f(d.
 S.prevE=d.prevE&&d.prevE.every(f)?d.prevE.map(f):null;
 S.sched={};for(const k of [...K,...KS]){const t=S.L[k].t,g=n=>t.find(x=>x.n===n);t.forEach(x=>{if(x.v==null)x.v=SV(x,S.tot[k]);if(x.fm==null)x.fm=0});
 const sv=d.sched&&d.sched[k];if(sv){const a=sv.map(([h,w])=>({h:g(h),a:g(w)}));if(a.every(p=>p.h&&p.a))S.sched[k]=a}}
-S.season=d.season;S.country=d.country;S.cur=d.cur;S.ph='ready';S.res=null;S.cups=null;S.fx={};S.snap=null;DRclear()}
+S.season=d.season;S.country=d.country;S.cur=d.cur;S.ph='ready';S.res={};S.cups={};S.log={};S.fx={};S.snap=null;DRclear()}
 const say=t=>{$('msg').textContent=t};
-function save(){try{localStorage.setItem('simfut_v1',S.ph=='done'&&S.snap?S.snap:ser());say(S.ph=='done'?'Guardé el inicio de esta temporada (antes de simularla). Empezá la siguiente para guardar el avance.':'Partida guardada en este navegador.')}catch(e){say('No se pudo guardar en este navegador.')}}
+function save(){try{localStorage.setItem('simfut_v1',ser());say(Object.keys(S.res).length||Object.keys(S.cups).length?'Guardé la temporada como está antes de las simulaciones finales. Empezá la siguiente para guardar el avance.':'Partida guardada en este navegador.')}catch(e){say('No se pudo guardar en este navegador.')}}
 let rsArm=0,INIT=null,INIT0=null;
 function reset(){if(!rsArm){rsArm=1;$('rs').textContent='⚠️ ¿Seguro? Tocá otra vez';setTimeout(()=>{rsArm=0;$('rs').textContent='🔄 Empezar desde cero'},4000);return}
 rsArm=0;try{localStorage.removeItem('simfut_v1')}catch(e){}load(INIT0);$('rs').textContent='🔄 Empezar desde cero';say('Torneo reiniciado desde cero: todas las ligas y copas sin partidos jugados.');draw()}
 function tabsR(){const f=(id,arr,nm,lb)=>{$(id).innerHTML=`<span class="grp">${lb}</span>`+arr.map(x=>`<button class="${x==S.cur?'on':''}" data-k="${x}">${nm(x)}</button>`).join('');$(id).querySelectorAll('button').forEach(e=>e.onclick=()=>{S.cur=e.dataset.k;draw()})};const co=COUNTRIES[S.country];f('tabs',co.leagues,x=>C[x].n,'Ligas');f('tabs2',co.cups,x=>CU[x],'Copas')}
-function drawCup(){const k=S.cur,c=S.cups&&S.cups[k];$('lgcard').style.display='none';$('ht').textContent=CU[k];$('hs').textContent=HS(c&&(c.w||c.m)?'finalizada':'por jugarse');$('fxv').innerHTML='';$('leg').innerHTML='';$('go').textContent=BT();
+function drawCup(){const k=S.cur,c=S.cups&&S.cups[k];$('lgcard').style.display='none';$('ht').textContent=CU[k];$('hs').textContent=HS(c&&(c.w||c.m)?'finalizada':'por jugarse');$('fxv').innerHTML='';$('leg').innerHTML='';$('go').textContent=BT();HP();
 const sc=m=>m.x+'-'+m.y+(m.two?' g':m.et?' pr':'')+(m.pen?' p':'');
 const mt=m=>`<div class="mt"><span class="a ${m.w==m.a?'w':''}">${crest(m.a.n)}${m.a.n}</span><span class="sc">${sc(m)}</span><span class="${m.w==m.b?'w':''}">${crest(m.b.n)}${m.b.n}</span></div>`;
 const w=$('win');let h='';
@@ -814,10 +849,10 @@ if(r){const nm=i=>L.t[i].n;w.style.display='block';const rel=r.o.slice(-c.r).map
 w.innerHTML=!c.po?`<small>🏆 Campeón</small><b>${nm(r.o[0])}</b><div class="sub">con ${r.pt[r.o[0]]} puntos · ⬇️ Descienden a ${c.dn}: ${rel}</div>`
 :`<small>⬆️ Ascienden a ${c.up}</small><b>${r.up.map(nm).join(', ')}</b><div class="sub">${nm(r.po.w)} ganó los playoffs (final: ${nm(r.po.f[0])} vs ${nm(r.po.f[1])}) · Campeón: ${nm(r.o[0])} · ⬇️ Descienden a ${c.dn}: ${rel}</div>`}
 else w.style.display='none';
-$('go').textContent=BT();
+$('go').textContent=BT();HP();
 $('nt').textContent=S.ph=='ready'?(S.season==1&&S.L.pl.t.some(x=>x.g>0)?(S.country=='es'?'Fechas de las tablas: LaLiga 9 nov. (jornada 12); el resto de España, principios de noviembre. ':'Fechas de las tablas: Premier 9 nov. (10 fechas); EFL 4 nov.; National League 31 oct.; National League Norte y Sur 31 ago.; Northern Premier 1 sep.; Isthmian y Southern 27 oct. ')+'Cada equipo juega exactamente los partidos que le faltan (los rivales que le quedan son aproximados). Las siguientes temporadas se juegan completas desde cero. ':'Inicio de temporada: todos en cero, ordenados por nivel. ')+'La fuerza de cada equipo sale de sus resultados, cada temporada tiene algo de azar (fichajes, técnicos, lesiones) y la racha de las últimas fechas también pesa. Al subir o bajar de categoría la fuerza se ajusta según la distancia entre divisiones.'+(S.season==1&&k=='pl'?' (A Sunderland le puse un ajuste manual para que no quede último siempre.)':''):'Es una simulación posible: cada vez sale un final distinto. ▲▼ comparan con la posición de partida. Los reemplazos desde el Step 4 son clubes reales que elegí yo.'}
-$('go').onclick=()=>{S.ph=='ready'?finish():advance();draw()};
-INIT=ser();INIT0=(()=>{const d=JSON.parse(INIT);delete d.sched;for(const k in d.L)d.L[k].forEach(x=>{x.pts=0;x.gd=0;x.g=0;x.v=null});return JSON.stringify(d)})();$('sv').onclick=save;$('rs').onclick=reset;$('rt').onclick=()=>{load(INIT);say('Se cargaron las tablas reales de hoy.');draw()};
+$('go').onclick=()=>{const k=S.cur;if(compDone(k))advance();else{say('');CU[k]?simCup(k):simLeague(k)}draw()};
+INIT=(()=>{const d=JSON.parse(ser());delete d.sched;for(const k in d.L)d.L[k].forEach(x=>{x.v=null;x.fm=0});return JSON.stringify(d)})();INIT0=(()=>{const d=JSON.parse(INIT);delete d.sched;for(const k in d.L)d.L[k].forEach(x=>{x.pts=0;x.gd=0;x.g=0;x.v=null});return JSON.stringify(d)})();$('sv').onclick=save;$('rs').onclick=reset;$('rt').onclick=()=>{load(INIT);say('Se cargaron las tablas reales de hoy.');draw()};
 try{const sv=localStorage.getItem('simfut_v1');if(sv){load(sv);say('Se cargó tu partida guardada.')}}catch(e){}
 draw();
 window.EU={set(c){S.country=c;const co=COUNTRIES[c];if(!co.leagues.includes(S.cur)&&!co.cups.includes(S.cur))S.cur=co.leagues[0];draw()}};
