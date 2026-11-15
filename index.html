@@ -14,6 +14,7 @@
 :root{--bg:#060a13;--pn:#0e1628;--pn2:#132038;--pn3:#1a2a48;--ln:rgba(148,163,184,.13);--tx:#e4e9f3;--wh:#f0f3f9;--mut:#8796b3;--acc:#5bc0ff;--acc2:#f5c518;--accd:#0a3456;--gold:#f5c518;--red:#ef4444;--blu:#3b82f6;--grn:#22c55e;--g:var(--acc);--b:var(--blu);--r:var(--red);--fc:"Barlow Condensed","Roboto Condensed","Segoe UI",system-ui,sans-serif;--fb:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark}
 body[data-c=ar]{--acc:#5bc0ff;--acc2:#f5c518;--accd:#0a3a63}
 body[data-c=en]{--acc:#b072ff;--acc2:#2ee6c8;--accd:#341160}
+body[data-c=sel]{--acc:#2fd38a;--acc2:#f5c518;--accd:#0b4a35}
 body[data-c=es]{--acc:#ff5263;--acc2:#ffc531;--accd:#560d18}
 *{box-sizing:border-box}html,body{margin:0}[hidden]{display:none!important}
 body{min-height:100vh;color:var(--tx);font:15px/1.45 var(--fb);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;padding-bottom:env(safe-area-inset-bottom,0px);
@@ -230,9 +231,19 @@ footer a{color:var(--mut)}
 .navp>.pg{padding:6px 12px}
 .navp .mt:first-child{border-top:0}
 #secAR .rd.nav{margin-left:0;margin-right:0}
+
+/* selecciones */
+.mode{margin-right:6px}
+.flg{width:21px;height:14px;object-fit:cover;border-radius:2px;margin-right:8px;vertical-align:-2px;box-shadow:0 0 0 1px rgba(255,255,255,.22),0 1px 3px rgba(0,0,0,.5);flex:none}
+#secAR tr.hq td{background:color-mix(in srgb,var(--acc2) 10%,transparent)}#secAR tr.hq td:first-child{box-shadow:inset 3px 0 var(--acc2);color:var(--acc2)}
+#secAR .sw .grp{min-width:92px}
+@media(max-width:560px){#secAR .sw .grp{min-width:0;width:100%}.mode .k{font-size:.8rem}}
+#sw.rows{display:block}#sw.rows .sw+.sw{margin-top:6px}
+@media(max-width:560px){.top .logo{display:none}.top .in{gap:6px;padding:8px}.cty button{padding:6px 8px;gap:5px;font-size:.82rem}.mode{margin-right:0}.brand{margin-right:auto}}
 </style></head><body data-c="ar">
 <header class="top"><div class="in">
 <div class="brand"><div class="logo">⚽</div><div><b>Simulador de Fútbol</b><small><i></i>Temporada en vivo</small></div></div>
+<nav class="cty mode" id="mode"><button data-m="clubes"><span class="x">⚽ Clubes</span><span class="k">Clubes</span></button><button data-m="sel"><span class="x">🌍 Selecciones</span><span class="k">Selec.</span></button></nav>
 <nav class="cty" id="cty">
 <button data-c="ar"><span class="fl ar"></span><span class="x">Argentina</span><span class="k">ARG</span></button>
 <button data-c="en"><span class="fl en"></span><span class="x">Inglaterra</span><span class="k">ING</span></button>
@@ -248,7 +259,15 @@ footer a{color:var(--mut)}
 <p class="help" id="help"></p></div>
 <div class="tabs" id="tabs"></div>
 <div id="v"></div>
-<details class="c"><summary>❓ ¿Cómo funciona?</summary><ul>
+<details class="c" id="selHelp" hidden><summary>❓ ¿Cómo funciona el modo Selecciones?</summary><ul>
+<li>La fuerza de cada selección sale del <b>ranking FIFA del 7 de octubre de 2026</b> (210 selecciones), con algo de azar por torneo y la racha de cada equipo. En las eliminatorias se juega de local y visitante; en los torneos finales, en cancha neutral, y los anfitriones tienen media localía.</li>
+<li><b>Nations League 2026-27:</b> arranca con las tablas reales después de la fecha 5 y se juega la fecha 6. Después vienen los cuartos (ida y vuelta), los repechajes de ascenso y descenso (A/B, B/C y C/D) y la Final Four. Es la última edición con Liga D.</li>
+<li><b>Eurocopa 2028:</b> 12 grupos de eliminatorias; van los 12 primeros y los 8 mejores segundos. Los anfitriones (Inglaterra, Escocia, Gales e Irlanda) tienen 2 lugares reservados, y el resto se define en un repechaje con ganadores de grupo de la Nations League. El torneo final es de 24 equipos.</li>
+<li><b>Copa América 2028:</b> en Estados Unidos, con las 10 de Conmebol y 6 de Concacaf (como en 2024). Todavía no está confirmado si serán 16 o 20 equipos.</li>
+<li><b>Mundial 2030:</b> la FIFA todavía no anunció los formatos, así que se usan los de las eliminatorias de 2026 adaptados a los 6 anfitriones (España, Portugal, Marruecos, Argentina, Uruguay y Paraguay). Cupos: UEFA 14 + 2 anfitriones, CAF 8 + Marruecos, Conmebol 3 + 3 anfitriones (que juegan las eliminatorias igual), AFC 8, Concacaf 6, OFC 1 y 2 por el repechaje intercontinental. El Mundial es de 48 equipos: 12 grupos, pasan los 2 primeros y los 8 mejores terceros.</li>
+<li>Los sorteos se hacen por bombos según el ranking; en el Mundial no puede haber dos equipos de la misma confederación en un grupo (salvo Europa, hasta dos).</li>
+<li>Las competencias que dependen de otras (la Eurocopa, el repechaje y el Mundial) se arman cuando terminan las anteriores; si falta alguna, un botón la simula al toque.</li></ul></details>
+<details class="c" id="arHelp"><summary>❓ ¿Cómo funciona?</summary><ul>
 <li>Hay <b>2 torneos</b> en el año: Apertura y Clausura. Los 30 equipos están en <b>2 zonas de 15</b>.</li>
 <li>Cada equipo juega <b>16 fechas</b>: 14 contra su zona y 2 contra equipos de la otra zona (uno es su clásico).</li>
 <li>Los <b>8 primeros de cada zona</b> (en verde) pasan a <b>playoffs</b>: octavos, cuartos, semis y final, todos a un solo partido.</li>
@@ -320,6 +339,235 @@ var h="<div class='rd nav' id='nav_"+id+"'><h3 class='navh'><button class='nb' "
 pages.forEach(function(p,k){h+="<div class='navp' data-t=\""+String(p.t).replace(/"/g,"&quot;")+"\""+(k==i?"":" hidden")+">"+p.h+"</div>"});return h+"</div>"}
 function navGo(id,d){var el=document.getElementById("nav_"+id);if(!el)return;var ps=el.querySelectorAll(".navp"),n=ps.length,i=Math.max(0,Math.min(n-1,(NAV[id]||0)+d));NAV[id]=i;
 ps.forEach(function(p,k){p.hidden=k!=i});document.getElementById("navt_"+id).textContent=ps[i].dataset.t;document.getElementById("navc_"+id).textContent="("+(i+1)+" de "+n+")";var b=el.querySelectorAll(".nb");b[0].disabled=i==0;b[1].disabled=i==n-1}
+
+var SEL_RAW="Spain|España|es|E|2011.57~Argentina|Argentina|ar|S|1972.80~France|Francia|fr|E|1958.86~England|Inglaterra|gb-eng|E|1925.59~Portugal|Portugal|pt|E|1807.69~Brazil|Brasil|br|S|1806.51~Morocco|Marruecos|ma|F|1805.34~Belgium|Bélgica|be|E|1779.17~Netherlands|Países Bajos|nl|E|1778.61~Mexico|México|mx|N|1738.48~Colombia|Colombia|co|S|1735.80~Switzerland|Suiza|ch|E|1725.39~Germany|Alemania|de|E|1717.52~Croatia|Croacia|hr|E|1714.74~Italy|Italia|it|E|1713.04~USA|Estados Unidos|us|N|1705.47~Japan|Japón|jp|A|1684.75~Senegal|Senegal|sn|F|1648.84~Norway|Noruega|no|E|1637.89~Uruguay|Uruguay|uy|S|1635.54~Denmark|Dinamarca|dk|E|1619.62~Austria|Austria|at|E|1600.66~Iran|Irán|ir|A|1597.31~Ecuador|Ecuador|ec|S|1587.07~Egypt|Egipto|eg|F|1585.86~Australia|Australia|au|A|1580.52~Canada|Canadá|ca|N|1575.31~Algeria|Argelia|dz|F|1574.77~Ivory Coast|Costa de Marfil|ci|F|1569.32~Nigeria|Nigeria|ng|F|1567.97~Turkey|Turquía|tr|E|1563.54~South Korea|Corea del Sur|kr|A|1562.49~Paraguay|Paraguay|py|S|1552.30~Sweden|Suecia|se|E|1543.80~Ukraine|Ucrania|ua|E|1535.27~Poland|Polonia|pl|E|1514.58~Hungary|Hungría|hu|E|1511.24~Wales|Gales|gb-wls|E|1510.37~DR Congo|RD Congo|cd|F|1506.37~Greece|Grecia|gr|E|1498.71~Cameroon|Camerún|cm|F|1485.30~Scotland|Escocia|gb-sct|E|1483.57~Serbia|Serbia|rs|E|1482.24~Slovakia|Eslovaquia|sk|E|1477.34~Panama|Panamá|pa|N|1476.97~Mali|Malí|ml|F|1474.14~South Africa|Sudáfrica|za|F|1468.88~Venezuela|Venezuela|ve|S|1465.87~Chile|Chile|cl|S|1458.97~Czech Republic|Chequia|cz|E|1457.12~Slovenia|Eslovenia|si|E|1452.48~Peru|Perú|pe|S|1450.95~Costa Rica|Costa Rica|cr|N|1444.85~Saudi Arabia|Arabia Saudita|sa|A|1443.17~Republic of Ireland|Irlanda|ie|E|1438.62~Bosnia-Herzegovina|Bosnia y Herzegovina|ba|E|1429.32~Romania|Rumania|ro|E|1428.88~Uzbekistan|Uzbekistán|uz|A|1416.61~Qatar|Catar|qa|A|1416.47~Tunisia|Túnez|tn|F|1415.38~Burkina Faso|Burkina Faso|bf|F|1407.80~Iraq|Irak|iq|A|1400.91~Northern Ireland|Irlanda del Norte|gb-nir|E|1383.86~United Arab Emirates|Emiratos Árabes|ae|A|1376.95~Albania|Albania|al|E|1375.78~Honduras|Honduras|hn|N|1375.40~Cape Verde|Cabo Verde|cv|F|1373.58~Jamaica|Jamaica|jm|N|1361.97~Ghana|Ghana|gh|F|1361.27~North Macedonia|Macedonia del Norte|mk|E|1350.91~Jordan|Jordania|jo|A|1350.88~Iceland|Islandia|is|E|1349.42~Georgia|Georgia|ge|E|1345.88~Finland|Finlandia|fi|E|1340.73~Kosovo|Kosovo|xk|E|1328.14~Israel|Israel|il|E|1325.52~Bolivia|Bolivia|bo|S|1322.19~Montenegro|Montenegro|me|E|1315.49~Curaçao|Curazao|cw|N|1304.98~Oman|Omán|om|A|1302.77~Guinea|Guinea|gn|F|1296.67~Angola|Angola|ao|F|1281.79~Haiti|Haití|ht|N|1280.91~Gabon|Gabón|ga|F|1280.12~Syria|Siria|sy|A|1279.94~Uganda|Uganda|ug|F|1278.26~New Zealand|Nueva Zelanda|nz|O|1277.02~Benin|Benín|bj|F|1266.01~Bulgaria|Bulgaria|bg|E|1262.57~Zambia|Zambia|zm|F|1260.61~Palestine|Palestina|ps|A|1253.75~Thailand|Tailandia|th|A|1251.42~Belarus|Bielorrusia|by|E|1249.60~Guatemala|Guatemala|gt|N|1245.10~China|China|cn|A|1241.90~Bahrain|Baréin|bh|A|1240.30~Mozambique|Mozambique|mz|F|1238.23~Vietnam|Vietnam|vn|A|1231.29~Tajikistan|Tayikistán|tj|A|1218.88~Luxembourg|Luxemburgo|lu|E|1218.80~El Salvador|El Salvador|sv|N|1212.40~Equatorial Guinea|Guinea Ecuatorial|gq|F|1200.39~Kyrgyzstan|Kirguistán|kg|A|1199.73~Trinidad and Tobago|Trinidad y Tobago|tt|N|1198.85~Madagascar|Madagascar|mg|F|1197.24~Comoros|Comoras|km|F|1192.28~Armenia|Armenia|am|E|1183.26~Gambia|Gambia|gm|F|1182.64~Mauritania|Mauritania|mr|F|1176.05~Niger|Níger|ne|F|1172.93~Lebanon|Líbano|lb|A|1170.30~Libya|Libia|ly|F|1168.89~Kenya|Kenia|ke|F|1168.67~Tanzania|Tanzania|tz|F|1166.82~Indonesia|Indonesia|id|A|1166.50~Kazakhstan|Kazajistán|kz|E|1166.26~Sudan|Sudán|sd|F|1156.74~Rwanda|Ruanda|rw|F|1156.16~Togo|Togo|tg|F|1153.04~North Korea|Corea del Norte|kp|A|1151.05~Estonia|Estonia|ee|E|1147.12~Namibia|Namibia|na|F|1146.48~Guinea-Bissau|Guinea-Bisáu|gw|F|1144.03~Cyprus|Chipre|cy|E|1142.43~Faroe Islands|Islas Feroe|fo|E|1140.10~Azerbaijan|Azerbaiyán|az|E|1138.96~Suriname|Surinam|sr|N|1138.46~Zimbabwe|Zimbabue|zw|F|1128.05~Sierra Leone|Sierra Leona|sl|F|1123.20~Malawi|Malaui|mw|F|1121.84~Congo|Congo|cg|F|1102.46~Malaysia|Malasia|my|A|1102.09~Kuwait|Kuwait|kw|A|1098.64~Dominican Republic|República Dominicana|do|N|1096.58~Philippines|Filipinas|ph|A|1095.85~Nicaragua|Nicaragua|ni|N|1090.80~India|India|in|A|1086.43~Turkmenistan|Turkmenistán|tm|A|1078.65~Burundi|Burundi|bi|F|1076.75~Botswana|Botsuana|bw|F|1073.85~Guyana|Guyana|gy|N|1071.38~Latvia|Letonia|lv|E|1069.33~Yemen|Yemen|ye|A|1067.53~Central African Republic|República Centroafricana|cf|F|1065.15~Liberia|Liberia|lr|F|1064.58~Ethiopia|Etiopía|et|F|1064.46~Lithuania|Lituania|lt|E|1059.28~Singapore|Singapur|sg|A|1058.95~Lesotho|Lesoto|ls|F|1053.09~Saint Kitts and Nevis|San Cristóbal y Nieves|kn|N|1041.42~Solomon Islands|Islas Salomón|sb|O|1035.95~Hong Kong|Hong Kong|hk|A|1035.23~Fiji|Fiyi|fj|O|1033.44~Puerto Rico|Puerto Rico|pr|N|1032.97~New Caledonia|Nueva Caledonia|nc|O|1026.01~Tahiti|Tahití|pf|O|1016.32~Moldova|Moldavia|md|E|1015.57~Myanmar|Myanmar|mm|A|1008.08~Malta|Malta|mt|E|1006.80~Vanuatu|Vanuatu|vu|O|1005.90~Antigua and Barbuda|Antigua y Barbuda|ag|N|992.54~Cuba|Cuba|cu|N|990.46~Eswatini|Esuatini|sz|F|979.01~Saint Lucia|Santa Lucía|lc|N|975.85~Saint Vincent and the Grenadines|San Vicente y Granadinas|vc|N|974.89~Papua New Guinea|Papúa Nueva Guinea|pg|O|969.14~Afghanistan|Afganistán|af|A|968.07~Grenada|Granada|gd|N|967.71~South Sudan|Sudán del Sur|ss|F|959.91~Bermuda|Bermudas|bm|N|951.28~Montserrat|Montserrat|ms|N|939.13~Maldives|Maldivas|mv|A|935.93~Barbados|Barbados|bb|N|934.52~Andorra|Andorra|ad|E|927.53~Taiwan|China Taipéi|tw|A|923.78~Cambodia|Camboya|kh|A|920.83~Nepal|Nepal|np|A|914.54~Mauritius|Mauricio|mu|F|906.24~Belize|Belice|bz|N|900.38~Chad|Chad|td|F|896.85~Bangladesh|Bangladés|bd|A|893.46~Eritrea|Eritrea|er|F|890.97~Sri Lanka|Sri Lanka|lk|A|890.64~Aruba|Aruba|aw|N|889.53~Dominica|Dominica|dm|N|884.58~Cook Islands|Islas Cook|ck|O|880.25~Laos|Laos|la|A|880.17~Samoa|Samoa|ws|O|876.41~Mongolia|Mongolia|mn|A|874.47~American Samoa|Samoa Americana|as|O|871.61~Bhutan|Bután|bt|A|870.81~Macau|Macao|mo|A|858.03~Sao Tome and Principe|Santo Tomé y Príncipe|st|F|855.10~Djibouti|Yibuti|dj|F|853.58~Brunei|Brunéi|bn|A|849.56~Pakistan|Pakistán|pk|A|839.03~Cayman Islands|Islas Caimán|ky|N|836.15~Tonga|Tonga|to|O|835.64~Somalia|Somalia|so|F|832.14~Gibraltar|Gibraltar|gi|E|829.49~Timor-Leste|Timor Oriental|tl|A|823.16~Guam|Guam|gu|A|819.54~Turks and Caicos Islands|Islas Turcas y Caicos|tc|N|806.26~Seychelles|Seychelles|sc|F|795.63~US Virgin Islands|Islas Vírgenes de EE.UU.|vi|N|794.75~Liechtenstein|Liechtenstein|li|E|790.18~Bahamas|Bahamas|bs|N|771.83~British Virgin Islands|Islas Vírgenes Británicas|vg|N|752.75~Anguilla|Anguila|ai|N|736.67~San Marino|San Marino|sm|E|715.93";
+
+/* ===================== MODO SELECCIONES =====================
+   Usa el mismo motor de competencias que las categorías argentinas (tablas, llaves, carga a mano,
+   botón Sim, visor de fechas). La fuerza de cada selección sale del ranking FIFA (7 oct 2026).
+   Índices de competencias en GC: 10 en adelante. */
+var NT=[],NTX={},FLAG={};
+SEL_RAW.split("~").forEach(function(l){var p=l.split("|"),t={en:p[0],n:p[1],iso:p[2],c:p[3],s:+p[4]/10};NT.push(t);NTX[t.en]=t;NTX[t.n]=t;FLAG[t.n]=t.iso});
+function NTt(x){return NTX[x]}
+function confT(c,ex){ex=ex||[];return NT.filter(function(t){return t.c==c&&ex.indexOf(t.en)<0}).sort(function(a,b){return b.s-a.s})}
+var SCONF={E:"UEFA",S:"Conmebol",F:"CAF",A:"AFC",N:"Concacaf",O:"OFC"};
+function shufA(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.random()*(i+1)|0,t=a[i];a[i]=a[j];a[j]=t}return a}
+
+// ---------- motor: competencia de selecciones ----------
+// escala: ~300 puntos FIFA de diferencia ≈ D 1 (un equipo claramente superior). Localía completa en eliminatorias; en los torneos el anfitrión tiene media localía
+function mkSK(id,nm,teams,phs){var K=mkK(id,nm,teams.map(function(t){return{n:t.n,s:t.s,c:t.c,iso:t.iso}}),40,1.45,.97,phs);K.sel=1;K.fn=1.12;K.hb=[1.22,1.03];K.E=K.T.map(function(x){return x.s+(Math.random()+Math.random()+Math.random()-1.5)*8});K.hosts={};K.q=[];newS(K);K.tabs=[];return K}
+function sidx(K,name){for(var i=0;i<K.T.length;i++)if(K.T[i].n==name||NTt(name)&&K.T[i].n==NTt(name).n)return i;return -1}
+// fases: cada función arma las rondas siguientes cuando termina la anterior
+function staged(K,st){var si=0;K.q=[];K.gen=function(){while(!K.q.length){if(si>=st.length)return null;var r=st[si++]();if(r&&r.length)K.q=K.q.concat(r)}return K.q.shift()};K.rounds=[K.gen()];K.ri=0;return K}
+function orient(K,ms){return ms.map(function(p){return K.hosts[p[1]]&&!K.hosts[p[0]]?[p[1],p[0]]:p})}
+// grupos todos contra todos (ida y vuelta si dbl_); neu: cancha neutral (torneos finales)
+function grpRounds(K,groups,dbl_,ph,neu,nmf){var RR=groups.map(function(g){var r=mkRR(g);return dbl_?dbl(r):r}),n=Math.max.apply(null,RR.map(function(r){return r.length})),out=[];
+for(var i=0;i<n;i++){var ms=[];RR.forEach(function(r){if(r[i])ms=ms.concat(r[i])});out.push(mkR(nmf?nmf(i):"Fecha "+(i+1),ph,orient(K,ms),0,neu?1:0))}return out}
+// llave a un partido
+function koR(K,nm,ph,pairs,neu){return[mkR(nm,ph,orient(K,pairs),1,neu?1:0)]}
+// llave de ida y vuelta: pairs [a,b] → b (mejor ubicado) es local en la vuelta
+function twoR(nm,ph,pairs){var r1=mkR(nm+" · ida",ph,pairs,1,0),r2=mkR(nm+" · vuelta",ph,pairs.map(function(p){return[p[1],p[0]]}),1,0);r1.leg=1;r2.leg=2;r1.ms.forEach(function(m,i){m.leg=1;r2.ms[i].p=m});return[r1,r2]}
+function lastR(K){return K.rounds[K.ri]}
+function winsOf(R){return R.ms.map(function(m){return m.w})}
+function losOf(R){return R.ms.map(function(m){return m.l})}
+// tabla de un grupo: posición k → clase de color
+function gtabs(K,groups,names,cl){K.tabs=groups.map(function(g,i){return{t:names[i],ids:g,cl:cl}})}
+// para comparar equipos de grupos distintos (segundos, terceros): puntos por partido, diferencia por partido, goles
+function rkX(K,ids){return ids.slice().sort(function(x,y){var a=K.S[x],b=K.S[y],pa=a.pj||1,pb=b.pj||1;return b.pt/pb-a.pt/pa||(b.gf-b.gc)/pb-(a.gf-a.gc)/pa||b.gf/pb-a.gf/pa||K.T[y].s-K.T[x].s})}
+// sorteo por bombos con restricciones (ids ya ordenados de mejor a peor)
+function drawGroups(K,ids,ng,cons){for(var tr=0;tr<400;tr++){var G=[],ok=true,g;for(g=0;g<ng;g++)G.push([]);
+for(var p=0;p*ng<ids.length&&ok;p++){var pot=shufA(ids.slice(p*ng,(p+1)*ng));for(var q=0;q<pot.length&&ok;q++){var t=pot[q],cand=[];for(g=0;g<ng;g++)if(G[g].length==p&&(!cons||cons(G[g],t)))cand.push(g);if(!cand.length)ok=false;else G[cand[Math.random()*cand.length|0]].push(t)}}
+if(ok)return G}
+var G2=[];for(g=0;g<ng;g++)G2.push([]);ids.forEach(function(t,i){G2[i%ng].push(t)});return G2}
+var GL="ABCDEFGHIJKL";
+// llave de eliminación por siembra: el 1 contra el último, sin cruces del mismo grupo, y los dos mejores solo se cruzan en la final
+function bo(m){if(m==1)return[0];var h=bo(m/2),r=[];h.forEach(function(x){r.push(x,m-1-x)});return r}
+function seedPairs(list,grp){var n=list.length,a=list.slice(0,n/2),b=list.slice(n/2).reverse(),i,j,t;
+for(i=0;i<a.length;i++)if(grp[a[i]]===grp[b[i]])for(j=0;j<b.length;j++)if(j!=i&&grp[a[i]]!==grp[b[j]]&&grp[a[j]]!==grp[b[i]]){t=b[i];b[i]=b[j];b[j]=t;break}
+var p=a.map(function(x,i){return[x,b[i]]});return bo(p.length).map(function(k){return p[k]})}
+function konN(K,R,ph){var r=kon(K,R,ph);r.neu=1;r.ms=orient(K,r.ms.map(function(m){return[m.h,m.a]})).map(function(p){return{h:p[0],a:p[1]}});return r}
+function chipL(ic,l,ids,K){return chip(ic,l,ids.map(function(i){return gn(K,i)}).join(", "))}
+function listCard(t,lines){return"<div class='c'><h2>"+t+"</h2><p class='lg' style='margin:0;line-height:1.9'>"+lines.join("<br>")+"</p></div>"}
+function nms(K,ids){return ids.map(function(i){return"<b>"+gn(K,i)+"</b>"}).join(", ")}
+
+// ---------- NATIONS LEAGUE 2026-27 (tablas reales después de la fecha 5) ----------
+// [equipo, PJ, G, E, P, GF, GC, Pts] y los partidos de la fecha 6 (15 al 17 de noviembre)
+var NLD=[["A1",[["Italy",5,3,1,1,11,6,10],["France",5,3,1,1,8,5,10],["Belgium",5,3,0,2,8,6,9],["Turkey",5,0,0,5,3,13,0]],[["Belgium","Italy"],["France","Turkey"]]],
+["A2",[["Netherlands",5,3,2,0,14,5,11],["Greece",5,2,2,1,5,10,8],["Germany",5,2,2,1,6,3,8],["Serbia",5,0,0,5,4,11,0]],[["Greece","Serbia"],["Germany","Netherlands"]]],
+["A3",[["Spain",5,5,0,0,14,5,15],["England",5,4,0,1,16,4,12],["Croatia",5,1,0,4,5,16,3],["Czech Republic",5,0,0,5,2,12,0]],[["Spain","England"],["Croatia","Czech Republic"]]],
+["A4",[["Portugal",5,4,0,1,10,8,12],["Denmark",5,3,0,2,11,8,9],["Norway",5,2,0,3,9,9,6],["Wales",5,1,0,4,3,8,3]],[["Denmark","Norway"],["Wales","Portugal"]]],
+["B1",[["Switzerland",5,4,1,0,11,1,13],["Slovenia",5,2,2,1,5,3,8],["Scotland",5,2,1,2,5,6,7],["North Macedonia",5,0,0,5,1,12,0]],[["Switzerland","Scotland"],["North Macedonia","Slovenia"]]],
+["B2",[["Northern Ireland",5,3,2,0,5,0,11],["Hungary",5,3,1,1,5,2,10],["Ukraine",5,1,1,3,2,6,4],["Georgia",5,0,2,3,0,4,2]],[["Ukraine","Georgia"],["Hungary","Northern Ireland"]]],
+["B3",[["Austria",5,3,2,0,10,5,11],["Kosovo",5,1,3,1,3,4,6],["Republic of Ireland",5,1,2,2,6,5,5],["Israel",5,0,3,2,2,7,3]],[["Republic of Ireland","Kosovo"],["Israel","Austria"]]],
+["B4",[["Sweden",5,4,1,0,10,5,13],["Bosnia-Herzegovina",5,2,2,1,8,6,8],["Poland",5,1,1,3,8,6,4],["Romania",5,1,0,4,5,14,3]],[["Poland","Sweden"],["Bosnia-Herzegovina","Romania"]]],
+["C1",[["Albania",5,4,0,1,10,3,12],["Belarus",5,3,1,1,7,2,10],["Finland",5,2,1,2,9,4,7],["San Marino",5,0,0,5,1,18,0]],[["Finland","San Marino"],["Belarus","Albania"]]],
+["C2",[["Montenegro",6,5,1,0,13,6,16],["Cyprus",6,2,2,2,7,8,8],["Armenia",6,1,3,2,5,6,6],["Latvia",6,0,2,4,3,8,2]],[]],
+["C3",[["Slovakia",5,3,2,0,11,4,11],["Moldova",5,2,1,2,5,9,7],["Faroe Islands",5,0,5,0,7,7,5],["Kazakhstan",5,0,2,3,6,9,2]],[["Kazakhstan","Slovakia"],["Faroe Islands","Moldova"]]],
+["C4",[["Iceland",5,3,2,0,12,1,11],["Estonia",5,2,3,0,3,1,9],["Bulgaria",5,1,1,3,3,10,4],["Luxembourg",5,1,0,4,2,8,3]],[["Estonia","Bulgaria"],["Iceland","Luxembourg"]]],
+["D1",[["Malta",3,2,1,0,4,2,7],["Andorra",4,1,1,2,3,3,4],["Gibraltar",3,0,2,1,1,3,2]],[["Gibraltar","Malta"]]],
+["D2",[["Azerbaijan",4,2,2,0,3,1,8],["Lithuania",3,1,1,1,3,2,4],["Liechtenstein",3,0,1,2,0,3,1]],[["Lithuania","Liechtenstein"]]]];
+function mkNL(){var tm=[],G=[];NLD.forEach(function(g){var ids=[];g[1].forEach(function(r){ids.push(tm.length);tm.push(NTt(r[0]))});G.push(ids)});
+var K=mkSK("NL","Nations League 2026-27",tm,["Fecha 6","Cuartos","Repechajes","Final Four"]),gi=0;
+NLD.forEach(function(g,k){g[1].forEach(function(r,j){var S=K.S[G[k][j]];S.pj=r[1];S.g=r[2];S.e=r[3];S.p=r[4];S.gf=r[5];S.gc=r[6];S.pt=r[7]})});
+var clA=function(k){return k<2?"q":k==2?"rd":"d"},clB=function(k){return k==0?"q":k<3?"rd":"d"},clC=function(k){return k==0?"q":k==1?"rd":k==3?"d":""},clD=function(k){return k==0?"q":k==1?"rd":""};
+K.tabs=NLD.map(function(g,k){return{t:"Grupo "+g[0],ids:G[k],cl:[clA,clB,clC,clD]["ABCD".indexOf(g[0][0])]}});
+K.tg=[{t:"Liga A",f:[0,1,2,3],leg:"🟩 1º y 2º: cuartos de final · 🟦 3º: repechaje A/B · 🟥 4º: desciende a la Liga B"},{t:"Liga B",f:[4,5,6,7],leg:"🟩 1º: asciende a la Liga A · 🟦 2º: repechaje A/B · 3º: repechaje B/C · 🟥 4º: desciende a la Liga C"},
+{t:"Liga C",f:[8,9,10,11],leg:"🟩 1º: asciende a la Liga B · 🟦 2º: repechaje B/C · 🟥 4º: los dos mejores cuartos juegan el repechaje C/D; los dos peores descienden"},{t:"Liga D",f:[12,13],leg:"🟩 1º: asciende a la Liga C · 🟦 2º: repechaje C/D (es la última edición con Liga D)"}];
+var O,res=K.res;
+function orders(){O=G.map(function(g){return ord(K,g)})}
+staged(K,[function(){var ms=[];NLD.forEach(function(g){g[2].forEach(function(p){ms.push([sidx(K,p[0]),sidx(K,p[1])])})});return[mkR("Fecha 6",0,ms,0,0)]},
+function(){orders();var W=[0,1,2,3].map(function(i){return O[i][0]}),Rr=[0,1,2,3].map(function(i){return O[i][1]}),perm;
+do{perm=shufA([0,1,2,3])}while(perm.some(function(p,i){return p==i}));
+res.A4=[0,1,2,3].map(function(i){return O[i][3]});res.Bw=[4,5,6,7].map(function(i){return O[i][0]});res.B4=[4,5,6,7].map(function(i){return O[i][3]});res.Cw=[8,9,10,11].map(function(i){return O[i][0]});res.Dw=[O[12][0],O[13][0]];
+var c4=rkX(K,[8,9,10,11].map(function(i){return O[i][3]}));res.C4b=c4.slice(0,2);res.C4w=c4.slice(2);
+K.sd={};[0,1,2,3].forEach(function(i){K.sd[W[i]]=i;K.sd[Rr[i]]=4+i});
+return twoR("Cuartos de final",1,W.map(function(w,i){return[Rr[perm[i]],w]}))},
+function(){res.QF=winsOf(lastR(K));var A3=shufA([0,1,2,3].map(function(i){return O[i][2]})),B2=shufA([4,5,6,7].map(function(i){return O[i][1]})),B3=shufA([4,5,6,7].map(function(i){return O[i][2]})),C2=shufA([8,9,10,11].map(function(i){return O[i][1]})),D2=shufA([O[12][1],O[13][1]]);
+res.pAB=A3.map(function(a,i){return[B2[i],a]});res.pBC=B3.map(function(b,i){return[C2[i],b]});res.pCD=res.C4b.map(function(c,i){return[D2[i],c]});
+return twoR("Repechajes de ascenso y descenso",2,[].concat(res.pAB,res.pBC,res.pCD))},
+function(){var R=lastR(K);res.rep=R.ms.map(function(m){return{w:m.w,l:m.l}});var q=shufA(res.QF);return koR(K,"Final Four · semifinales",3,[[q[0],q[1]],[q[2],q[3]]],1)},
+function(){var R=lastR(K);res.sfL=losOf(R);return koR(K,"Final Four · tercer puesto",3,[[res.sfL[0],res.sfL[1]]],1).concat(koR(K,"Final Four · final",3,[[R.ms[0].w,R.ms[1].w]],1))},
+function(){var f=lastR(K).ms[0];res.champ=f.w;res.ru=f.l;
+// ranking de ganadores de grupo (para el repechaje de la Euro): primero los de la Liga A, después B, C y D
+res.gw=[].concat(rkX(K,[0,1,2,3].map(function(i){return O[i][0]})),rkX(K,res.Bw),rkX(K,res.Cw),rkX(K,res.Dw));return null}]);
+K.ban=function(){var r=K.res,rp=r.rep,ab=rp.slice(0,4),bc=rp.slice(4,8),cd=rp.slice(8);
+var A1=[].concat(r.Bw,ab.filter(function(x){return r.pAB.some(function(p){return p[0]==x.w})}).map(function(x){return x.w})),Ad=[].concat(r.A4,ab.filter(function(x){return r.pAB.some(function(p){return p[1]==x.l})}).map(function(x){return x.l}));
+var B1=[].concat(r.Cw,bc.filter(function(x){return r.pBC.some(function(p){return p[0]==x.w})}).map(function(x){return x.w})),Bd=[].concat(r.B4,bc.filter(function(x){return r.pBC.some(function(p){return p[1]==x.l})}).map(function(x){return x.l}));
+var C1=[].concat(r.Dw,cd.filter(function(x){return r.pCD.some(function(p){return p[0]==x.w})}).map(function(x){return x.w})),Cd=[].concat(r.C4w,cd.filter(function(x){return r.pCD.some(function(p){return p[1]==x.l})}).map(function(x){return x.l}));
+return chip("🏆","Campeón de la Nations League",gn(K,r.champ))+chip("🥈","Subcampeón",gn(K,r.ru))+"</div>"+listCard("🔁 Ascensos y descensos para la edición 2028-29",["⬆️ Suben a la Liga A: "+nms(K,A1),"⬇️ Bajan a la Liga B: "+nms(K,Ad),"⬆️ Suben a la Liga B: "+nms(K,B1),"⬇️ Bajan a la Liga C: "+nms(K,Bd),"⬆️ Suben a la Liga C: "+nms(K,C1),"⬇️ Bajan a la Liga D: "+nms(K,Cd)])+"<div>"};
+K.leg="";return K}
+
+// ---------- ELIMINATORIAS EURO 2028 ----------
+var EHOST=["England","Scotland","Wales","Republic of Ireland"];
+function mkEQ(){var tm=confT("E"),K=mkSK("EQ","Eliminatorias Eurocopa 2028",tm,["Grupos","Repechaje"]),ids=tm.map(function(_,i){return i}),H=EHOST.map(function(n){return sidx(K,n)});
+var G=drawGroups(K,ids,12,function(g,t){return!(H.indexOf(t)>=0&&g.some(function(x){return H.indexOf(x)>=0}))}),res=K.res;
+gtabs(K,G,G.map(function(_,i){return"Grupo "+GL[i]}),function(k){return k==0?"q":k==1?"rd":""});
+K.leg="🟩 Los 12 primeros van a la Euro · 🟦 los 8 mejores segundos también; los otros segundos van al repechaje con ganadores de grupo de la Nations League. Los anfitriones (Inglaterra, Escocia, Gales e Irlanda) tienen 2 lugares reservados si no clasifican.";
+staged(K,[function(){return grpRounds(K,G,1,0,0)},
+function(){var O=G.map(function(g){return ord(K,g)}),W=O.map(function(o){return o[0]}),R2=rkX(K,O.map(function(o){return o[1]})),q=W.concat(R2.slice(0,8)),rest=R2.slice(8);
+var hn=H.filter(function(h){return q.indexOf(h)<0}).sort(function(a,b){return K.T[b].s-K.T[a].s}),resv=hn.slice(0,2);rest=rest.filter(function(x){return resv.indexOf(x)<0});
+res.direct=q;res.resv=resv;var P=4-resv.length;res.P=P;
+// la Nations League define los otros equipos del repechaje
+var NL=selEnsure(10),gw=NL.res.gw.map(function(i){return sidx(K,NL.T[i].n)}).filter(function(i){return i>=0&&q.indexOf(i)<0&&resv.indexOf(i)<0&&rest.indexOf(i)<0}),need=(P==4?8:P*4)-rest.length,
+pool=rest.concat(gw.slice(0,need));if(pool.length<(P==4?8:P*4)){var ex=ids.filter(function(i){return q.indexOf(i)<0&&resv.indexOf(i)<0&&pool.indexOf(i)<0}).sort(function(a,b){return K.T[b].s-K.T[a].s});pool=pool.concat(ex.slice(0,(P==4?8:P*4)-pool.length))}
+pool.sort(function(a,b){return K.T[b].s-K.T[a].s});res.pool=pool;K.sd={};pool.forEach(function(x,i){K.sd[x]=i});
+if(P==4){res.mode=4;return twoR("Repechaje",1,[0,1,2,3].map(function(i){return[pool[7-i],pool[i]]}))}
+res.mode=P;var sf=[];for(var p=0;p<P;p++){var g=pool.filter(function(_,i){return i%P==p});sf.push([g[0],g[3]],[g[1],g[2]])}return koR(K,"Repechaje · semifinales",1,sf,0)},
+function(){if(K.res.mode==4){K.res.po=winsOf(lastR(K));return null}var w=winsOf(lastR(K)),f=[];for(var i=0;i<w.length;i+=2)f.push(bm(K,w[i],w[i+1]));return koR(K,"Repechaje · finales",1,f,0)},
+function(){if(K.res.mode!=4)K.res.po=winsOf(lastR(K));K.res.q=[].concat(K.res.direct,K.res.resv,K.res.po);return null}]);
+K.ban=function(){var r=K.res;if(!r.q)r.q=[].concat(r.direct,r.resv,r.po);return"</div>"+listCard("🎟️ Clasificados a la Eurocopa 2028 (24)",["Ganadores de grupo y mejores segundos: "+nms(K,r.direct),(r.resv.length?"Anfitriones con lugar reservado: "+nms(K,r.resv):"Los anfitriones no necesitaron el lugar reservado."),"Por el repechaje: "+nms(K,r.po)])+"<div>"};
+return K}
+
+// ---------- torneo final genérico: grupos de 4 + eliminación ----------
+// cfg: {teams, ng, hosts:[nombres], pot1:[nombres], adv3:cuántos terceros pasan, third:bool, cons}
+function finals(K,cfg){var ids=K.T.map(function(_,i){return i}),res=K.res,H=(cfg.hosts||[]).map(function(n){return sidx(K,n)}).filter(function(i){return i>=0});H.forEach(function(h){K.hosts[h]=1});
+var p1=(cfg.pot1||[]).map(function(n){return sidx(K,n)}).filter(function(i){return i>=0}),rest=ids.filter(function(i){return p1.indexOf(i)<0}).sort(function(a,b){return K.T[b].s-K.T[a].s}),ord1=p1.concat(rest);
+var G=drawGroups(K,ord1,cfg.ng,cfg.cons),gof={};G.forEach(function(g,i){g.forEach(function(t){gof[t]=i})});res.G=G;
+var a3=cfg.adv3||0;gtabs(K,G,G.map(function(_,i){return"Grupo "+GL[i]}),function(k){return k<2?"q":k==2&&a3?"rd":""});
+K.leg="🟩 Los dos primeros de cada grupo pasan"+(a3?" · 🟦 también los "+a3+" mejores terceros":"")+". Partidos en cancha neutral"+(H.length?" (los anfitriones juegan de local)":"")+".";
+var st=[function(){return grpRounds(K,G,0,0,1)},
+function(){var O=G.map(function(g){return ord(K,g)}),W=rkX(K,O.map(function(o){return o[0]})),R2=rkX(K,O.map(function(o){return o[1]})),T3=rkX(K,O.map(function(o){return o[2]})).slice(0,a3),all=W.concat(R2,T3);
+K.sd={};all.forEach(function(x,i){K.sd[x]=i});var pr=cfg.qf?cfg.qf(O):seedPairs(all,gof),r=koR(K,KN[pr.length]||"Eliminatoria",1,pr,1);r[0].ph=1;return r}];
+var nKO=Math.log(cfg.ko)/Math.log(2);
+for(var k=1;k<nKO;k++)(function(k){st.push(function(){var R=lastR(K);if(cfg.third&&R.ms.length==2){res.sfL=losOf(R);var w=winsOf(R);return koR(K,"Tercer puesto",1+k,[[res.sfL[0],res.sfL[1]]],1).concat(koR(K,"Final",1+k,[[w[0],w[1]]],1))}return[konN(K,R,1+k)]})})(k);
+st.push(function(){var f=lastR(K).ms[0];res.champ=f.w;res.ru=f.l;if(cfg.third){var t=K.rounds[K.ri-1];res.third=t.ms[0].w}return null});
+staged(K,st);
+K.ban=function(){return chip("🏆","Campeón",gn(K,res.champ))+chip("🥈","Subcampeón",gn(K,res.ru))+(res.third!=null?chip("🥉","Tercer puesto",gn(K,res.third)):"")};return K}
+
+// ---------- EUROCOPA 2028 (Reino Unido e Irlanda) ----------
+function mkEU(){var EQ=GC[11],q=EQ.res.q.map(function(i){return NTt(EQ.T[i].n)}),K=mkSK("EU","Eurocopa 2028",q,["Grupos","Octavos","Cuartos","Semis","Final"]);
+var h=EHOST.filter(function(n){return sidx(K,n)>=0}),p1=h.concat(q.slice().sort(function(a,b){return b.s-a.s}).map(function(t){return t.en}).filter(function(n){return h.indexOf(n)<0})).slice(0,6);
+return finals(K,{ng:6,hosts:h,pot1:p1,adv3:4,ko:16})}
+
+// ---------- COPA AMÉRICA 2028 (Estados Unidos) ----------
+function mkCA(){var tm=confT("S").concat(confT("N").slice(0,6)),K=mkSK("CA","Copa América 2028",tm,["Grupos","Cuartos","Semis","Final"]);
+var p1=["USA","Argentina"].concat(tm.filter(function(t){return t.en!="USA"&&t.en!="Argentina"}).slice(0,2).map(function(t){return t.en}));
+return finals(K,{ng:4,hosts:["USA"],pot1:p1,ko:8,third:1,qf:function(O){K.sd={};var p=[[O[0][0],O[1][1]],[O[1][0],O[0][1]],[O[2][0],O[3][1]],[O[3][0],O[2][1]]];p.forEach(function(x,i){K.sd[x[0]]=i;K.sd[x[1]]=4+i});return[p[0],p[2],p[1],p[3]]}})}
+
+// ---------- ELIMINATORIAS MUNDIAL 2030 ----------
+// cupos (como en 2026, con los 6 anfitriones dentro de sus confederaciones): UEFA 16 (2 anfitriones), CAF 9 (Marruecos), Conmebol 6 (3 anfitriones),
+// AFC 8, Concacaf 6, OFC 1 y 2 por el repechaje intercontinental
+var WHOST=["Spain","Portugal","Morocco","Argentina","Uruguay","Paraguay"];
+function mkWS(){var tm=confT("S"),K=mkSK("WS","Eliminatorias Sudamericanas",tm,["Todos contra todos"]),ids=tm.map(function(_,i){return i}),H=["Argentina","Uruguay","Paraguay"].map(function(n){return sidx(K,n)});
+var nh=function(){return ord(K,ids).filter(function(i){return H.indexOf(i)<0})};
+K.tabs=[{t:"Tabla general",ids:ids,cl:function(k,l,i){if(H.indexOf(i)>=0)return"hq";var o=nh(),p=o.indexOf(i);return p<3?"q":p==3?"rd":""}}];
+K.leg="⭐ Argentina, Uruguay y Paraguay ya están clasificados como anfitriones, pero juegan igual · 🟩 los 3 mejores del resto van al Mundial · 🟦 el 4º va al repechaje intercontinental";
+staged(K,[function(){return grpRounds(K,[ids],1,0,0)},function(){var o=nh();K.res.q=o.slice(0,3);K.res.po=[o[3]];return null}]);
+K.ban=function(){return chipL("🎟️","Clasificados al Mundial",K.res.q,K)+chipL("🔁","Repechaje intercontinental",K.res.po,K)};return K}
+function mkWE(){var tm=confT("E",["Spain","Portugal"]),K=mkSK("WE","Eliminatorias europeas",tm,["Grupos","Repechaje"]),ids=tm.map(function(_,i){return i});
+var G=drawGroups(K,ids,12),res=K.res;gtabs(K,G,G.map(function(_,i){return"Grupo "+GL[i]}),function(k){return k==0?"q":k==1?"rd":""});
+K.leg="España y Portugal ya están clasificados como anfitriones · 🟩 los 12 primeros van al Mundial · 🟦 los 8 mejores segundos juegan el repechaje (2 caminos, 2 lugares)";
+staged(K,[function(){return grpRounds(K,G,1,0,0)},
+function(){var O=G.map(function(g){return ord(K,g)});res.W=O.map(function(o){return o[0]});var R2=rkX(K,O.map(function(o){return o[1]})).slice(0,8);K.sd={};R2.forEach(function(x,i){K.sd[x]=i});
+return koR(K,"Repechaje · semifinales",1,[[R2[0],R2[7]],[R2[3],R2[4]],[R2[1],R2[6]],[R2[2],R2[5]]],0)},
+function(){var w=winsOf(lastR(K));return koR(K,"Repechaje · finales",1,[bm(K,w[0],w[1]),bm(K,w[2],w[3])],0)},
+function(){res.q=res.W.concat(winsOf(lastR(K)));return null}]);
+K.ban=function(){return"</div>"+listCard("🎟️ Clasificados al Mundial 2030 (14 + España y Portugal)",[nms(K,K.res.q)])+"<div>"};return K}
+function mkWF(){var tm=confT("F",["Morocco"]),K=mkSK("WF","Eliminatorias africanas",tm,["Grupos","Repechaje CAF"]),ids=tm.map(function(_,i){return i});
+var G=drawGroups(K,ids,8),res=K.res;gtabs(K,G,G.map(function(_,i){return"Grupo "+GL[i]}),function(k){return k==0?"q":k==1?"rd":""});
+K.leg="Marruecos ya está clasificado como anfitrión · 🟩 los 8 primeros van al Mundial · 🟦 los 4 mejores segundos juegan el repechaje africano: el ganador va al repechaje intercontinental";
+staged(K,[function(){return grpRounds(K,G,1,0,0)},
+function(){var O=G.map(function(g){return ord(K,g)});res.q=O.map(function(o){return o[0]});var R2=rkX(K,O.map(function(o){return o[1]})).slice(0,4);K.sd={};R2.forEach(function(x,i){K.sd[x]=i});return koR(K,"Repechaje CAF · semifinales",1,[[R2[0],R2[3]],[R2[1],R2[2]]],1)},
+function(){var w=winsOf(lastR(K));return koR(K,"Repechaje CAF · final",1,[[w[0],w[1]]],1)},function(){res.po=winsOf(lastR(K));return null}]);
+K.ban=function(){return"</div>"+listCard("🎟️ Clasificados al Mundial 2030 (8 + Marruecos)",[nms(K,K.res.q),"🔁 Repechaje intercontinental: "+nms(K,K.res.po)])+"<div>"};return K}
+function mkWA(){var tm=confT("A"),n=tm.length,k1=n-36,K=mkSK("WA","Eliminatorias asiáticas",tm,["1ª ronda","2ª ronda","3ª ronda","4ª ronda","5ª ronda"]),ids=tm.map(function(_,i){return i}),res=K.res,top=ids.slice(0,n-2*k1),low=ids.slice(n-2*k1),G2,G3,G4;
+K.leg="1ª ronda: los "+2*k1+" de menor ranking, ida y vuelta";
+staged(K,[function(){var l=shufA(low);return twoR("1ª ronda",0,l.slice(0,k1).map(function(x,i){return[l[k1+i],x]}))},
+function(){var w=winsOf(lastR(K)),p=top.concat(w).sort(function(a,b){return K.T[b].s-K.T[a].s});G2=drawGroups(K,p,9);newS(K);gtabs(K,G2,G2.map(function(_,i){return"2ª ronda · Grupo "+GL[i]}),function(k){return k<2?"q":""});K.leg="🟩 Los 2 primeros de cada grupo pasan a la 3ª ronda";return grpRounds(K,G2,1,1,0,function(i){return"2ª ronda · fecha "+(i+1)})},
+function(){var q=[];G2.forEach(function(g){var o=ord(K,g);q.push(o[0],o[1])});q.sort(function(a,b){return K.T[b].s-K.T[a].s});G3=drawGroups(K,q,3);newS(K);gtabs(K,G3,G3.map(function(_,i){return"3ª ronda · Grupo "+GL[i]}),function(k){return k<2?"q":k<4?"rd":""});
+K.leg="🟩 Los 2 primeros de cada grupo van al Mundial · 🟦 3º y 4º pasan a la 4ª ronda";return grpRounds(K,G3,1,2,0,function(i){return"3ª ronda · fecha "+(i+1)})},
+function(){var p=[];res.q=[];G3.forEach(function(g){var o=ord(K,g);res.q.push(o[0],o[1]);p.push(o[2],o[3])});p.sort(function(a,b){return K.T[b].s-K.T[a].s});G4=drawGroups(K,p,2);newS(K);gtabs(K,G4,G4.map(function(_,i){return"4ª ronda · Grupo "+GL[i]}),function(k){return k==0?"q":k==1?"rd":""});
+K.leg="🟩 El ganador de cada grupo va al Mundial · 🟦 los segundos juegan la 5ª ronda (sede neutral)";return grpRounds(K,G4,0,3,1,function(i){return"4ª ronda · fecha "+(i+1)})},
+function(){var o=G4.map(function(g){return ord(K,g)});res.q.push(o[0][0],o[1][0]);return twoR("5ª ronda",4,[[o[0][1],o[1][1]]])},
+function(){res.po=winsOf(lastR(K));return null}]);
+K.ban=function(){return"</div>"+listCard("🎟️ Clasificados al Mundial 2030 (8)",[nms(K,K.res.q),"🔁 Repechaje intercontinental: "+nms(K,K.res.po)])+"<div>"};return K}
+function mkWN(){var tm=confT("N"),n=tm.length,k1=n-30,K=mkSK("WN","Eliminatorias de Concacaf",tm,["1ª ronda","2ª ronda","3ª ronda"]),ids=tm.map(function(_,i){return i}),res=K.res,top=ids.slice(0,n-2*k1),low=ids.slice(n-2*k1),G2,G3;
+K.leg="1ª ronda: los "+2*k1+" de menor ranking, ida y vuelta";
+staged(K,[function(){var l=shufA(low);return twoR("1ª ronda",0,l.slice(0,k1).map(function(x,i){return[l[k1+i],x]}))},
+function(){var p=top.concat(winsOf(lastR(K))).sort(function(a,b){return K.T[b].s-K.T[a].s});G2=drawGroups(K,p,6);newS(K);gtabs(K,G2,G2.map(function(_,i){return"2ª ronda · Grupo "+GL[i]}),function(k){return k<2?"q":""});K.leg="🟩 Los 2 primeros de cada grupo pasan a la 3ª ronda (todos contra todos a una rueda)";return grpRounds(K,G2,0,1,0,function(i){return"2ª ronda · fecha "+(i+1)})},
+function(){var q=[];G2.forEach(function(g){var o=ord(K,g);q.push(o[0],o[1])});q.sort(function(a,b){return K.T[b].s-K.T[a].s});G3=drawGroups(K,q,3);newS(K);gtabs(K,G3,G3.map(function(_,i){return"3ª ronda · Grupo "+GL[i]}),function(k){return k<2?"q":k==2?"rd":""});
+K.leg="🟩 Los 2 primeros de cada grupo van al Mundial · 🟦 los 2 mejores terceros van al repechaje intercontinental";return grpRounds(K,G3,1,2,0,function(i){return"3ª ronda · fecha "+(i+1)})},
+function(){var O=G3.map(function(g){return ord(K,g)});res.q=[];O.forEach(function(o){res.q.push(o[0],o[1])});res.po=rkX(K,O.map(function(o){return o[2]})).slice(0,2);return null}]);
+K.ban=function(){return"</div>"+listCard("🎟️ Clasificados al Mundial 2030 (6)",[nms(K,K.res.q),"🔁 Repechaje intercontinental: "+nms(K,K.res.po)])+"<div>"};return K}
+function mkWO(){var tm=confT("O"),K=mkSK("WO","Eliminatorias de Oceanía",tm,["1ª ronda","2ª ronda","Semis","Final"]),ids=tm.map(function(_,i){return i}),res=K.res,low=ids.slice(-4),top=ids.slice(0,-4),G2;
+staged(K,[function(){gtabs(K,[low],["1ª ronda"],function(k){return k==0?"q":""});K.leg="🟩 El ganador pasa a la 2ª ronda (sede neutral)";return grpRounds(K,[low],0,0,1,function(i){return"1ª ronda · fecha "+(i+1)})},
+function(){var w=ord(K,low)[0];G2=drawGroups(K,top.concat([w]).sort(function(a,b){return K.T[b].s-K.T[a].s}),2);newS(K);gtabs(K,G2,G2.map(function(_,i){return"2ª ronda · Grupo "+GL[i]}),function(k){return k<2?"q":""});K.leg="🟩 Los 2 primeros pasan a las semifinales (sede neutral)";return grpRounds(K,G2,0,1,1,function(i){return"2ª ronda · fecha "+(i+1)})},
+function(){var a=ord(K,G2[0]),b=ord(K,G2[1]);return koR(K,"Semifinales",2,[[a[0],b[1]],[b[0],a[1]]],1)},
+function(){var w=winsOf(lastR(K));return koR(K,"Final",3,[[w[0],w[1]]],1)},function(){var f=lastR(K).ms[0];res.q=[f.w];res.po=[f.l];return null}]);
+K.ban=function(){return chipL("🎟️","Clasificado al Mundial",K.res.q,K)+chipL("🔁","Repechaje intercontinental",K.res.po,K)};return K}
+// repechaje intercontinental: los 2 mejores rankeados esperan en las finales
+function mkWR(){var tm=[];[14,16,17,18,19].forEach(function(m){var Q=GC[m];Q.res.po.forEach(function(i){tm.push(NTt(Q.T[i].n))})});tm.sort(function(a,b){return b.s-a.s});
+var K=mkSK("WR","Repechaje intercontinental",tm,["Semifinales","Finales"]),res=K.res;
+staged(K,[function(){return koR(K,"Semifinales",0,[[2,5],[3,4]],1)},function(){var w=winsOf(lastR(K));return koR(K,"Finales",1,[[0,w[1]],[1,w[0]]],1)},function(){res.q=winsOf(lastR(K));return null}]);
+K.ban=function(){return chipL("🎟️","Clasificados al Mundial",K.res.q,K)};return K}
+// MUNDIAL 2030: 48 equipos, 12 grupos de 4; pasan los 2 primeros y los 8 mejores terceros
+function mkWM(){var tm=WHOST.map(NTt),add=function(m){var Q=GC[m];Q.res.q.forEach(function(i){tm.push(NTt(Q.T[i].n))})};[14,15,16,17,18,19,20].forEach(add);
+var K=mkSK("WM","Mundial 2030",tm,["Grupos","16avos","Octavos","Cuartos","Semis","Final"]);
+return finals(K,{ng:12,hosts:["Spain","Portugal","Morocco"],pot1:["Spain","Portugal","Morocco"].concat(tm.slice().sort(function(a,b){return b.s-a.s}).map(function(t){return t.en}).filter(function(n){return["Spain","Portugal","Morocco"].indexOf(n)<0}).slice(0,9)),adv3:8,ko:32,third:1,
+cons:function(g,t){var c=K.T[t].c,n=g.filter(function(x){return K.T[x].c==c}).length;return c=="E"?n<2:n<1}})}
+
+// ---------- registro de competencias y navegación ----------
+var SELD={10:{nm:"Nations League",full:"Nations League 2026-27",g:"Europa",mk:mkNL,deps:[]},11:{nm:"Eliminatorias Euro",full:"Eliminatorias Eurocopa 2028",g:"Europa",mk:mkEQ,deps:[]},12:{nm:"Eurocopa 2028",full:"Eurocopa 2028 · Reino Unido e Irlanda",g:"Europa",mk:mkEU,deps:[11]},
+13:{nm:"Copa América 2028",full:"Copa América 2028 · Estados Unidos",g:"América",mk:mkCA,deps:[]},
+14:{nm:"Sudamérica",full:"Eliminatorias Mundial 2030 · Sudamérica",g:"Mundial 2030",mk:mkWS,deps:[]},15:{nm:"Europa",full:"Eliminatorias Mundial 2030 · Europa",g:"Mundial 2030",mk:mkWE,deps:[]},16:{nm:"África",full:"Eliminatorias Mundial 2030 · África",g:"Mundial 2030",mk:mkWF,deps:[]},
+17:{nm:"Asia",full:"Eliminatorias Mundial 2030 · Asia",g:"Mundial 2030",mk:mkWA,deps:[]},18:{nm:"Concacaf",full:"Eliminatorias Mundial 2030 · Concacaf",g:"Mundial 2030",mk:mkWN,deps:[]},19:{nm:"Oceanía",full:"Eliminatorias Mundial 2030 · Oceanía",g:"Mundial 2030",mk:mkWO,deps:[]},
+20:{nm:"Repechaje",full:"Repechaje intercontinental 2030",g:"Mundial 2030",mk:mkWR,deps:[14,16,17,18,19]},21:{nm:"🏆 Mundial 2030",full:"Mundial 2030 · España, Portugal y Marruecos",g:"Mundial 2030",mk:mkWM,deps:[14,15,16,17,18,19,20]}};
+var SMODE=0,SCUR=14,CMODE=0;
+function selGet(m){if(GC[m])return GC[m];var d=SELD[m];if(d.deps.every(function(x){return GC[x]&&GC[x].done})){GC[m]=d.mk();return GC[m]}return null}
+// termina (simulando) una competencia y todo lo que necesita antes
+function selEnsure(m){SELD[m].deps.forEach(selEnsure);var K=selGet(m);while(!K.done)gstep(K,0);return K}
+function selMissing(m){var out=[];SELD[m].deps.forEach(function(x){if(!(GC[x]&&GC[x].done)){selMissing(x).forEach(function(y){if(out.indexOf(y)<0)out.push(y)});if(out.indexOf(x)<0)out.push(x)}});return out}
+// al reiniciar una competencia se borran las que dependen de ella
+function selReset(m){GC[m]=null;Object.keys(SELD).forEach(function(k){if(SELD[k].deps.indexOf(m)>=0&&GC[k])selReset(+k)});GC[m]=null;var K=selGet(m);tab=K&&K.tg?10:0;K?drawG(K):drawDep(m)}
+function selSw(){var d=SELD[MODE];document.getElementById("ht").textContent=d?d.full:"Selecciones";document.getElementById("b5").textContent="🎯 Partido a partido: "+(ONE?"SÍ":"NO");
+var gs=["Europa","América","Mundial 2030"],h="";gs.forEach(function(g){h+="<div class='sw'><span class='grp'>"+g+"</span>"+Object.keys(SELD).filter(function(k){return SELD[k].g==g}).map(function(k){var K=GC[k];return"<button class='"+(MODE==k?"on":"")+"' onclick='setM("+k+")'>"+SELD[k].nm+(K&&K.done?" ✓":"")+"</button>"}).join("")+"</div>"});
+var e=document.getElementById("sw");e.innerHTML=h;e.classList.add("rows")}
+function drawDep(m){selSw();var E2=document.getElementById.bind(document),miss=selMissing(m);E2("hs").textContent="Todavía no se puede jugar: faltan competencias previas";E2("stp").innerHTML="";E2("tabs").innerHTML="";
+E2("ban").innerHTML="";E2("v").innerHTML="<div class='c'><h2>⏳ Para armar "+SELD[m].nm+" primero tienen que terminar</h2><p class='lg' style='margin:0;line-height:1.9'>"+miss.map(function(x){var K=GC[x];return"• "+SELD[x].full+(K?" (en juego)":" (sin empezar)")+" <button class='fb' style='flex:none;padding:5px 10px;margin-left:6px' onclick='setM("+x+")'>Ir</button>"}).join("<br>")+"</p></div>";
+E2("b1").textContent="⏩ Simular lo que falta y armar "+SELD[m].nm;E2("help").textContent="Simula en un toque todas las competencias previas que falten (las que ya jugaste se respetan).";E2("b2").textContent="⏩ Simular todo";E2("b2").disabled=true}
+function drawSel(m){var K=selGet(m);if(K)drawG(K);else drawDep(m)}
+function selEnter(){if(SMODE)return;SMODE=1;CMODE=MODE;MODE=SCUR;setM(MODE)}
+function selLeave(){if(!SMODE)return;SMODE=0;SCUR=MODE;MODE=CMODE;tab=0}
 
 
 var Q=[[["Boca",82],["River",81]],[["Independiente",72],["Racing",77]],[["San Lorenzo",77],["Huracán",70]],[["Newell’s",63],["Rosario Central",81]],[["Lanús",70],["Banfield",63]],[["Vélez",76],["Tigre",63]],[["Platense",70],["Argentinos",74]],[["Estudiantes LP",76],["Gimnasia LP",62]],[["Talleres",71],["Belgrano",72]],[["Gimnasia (Mza)",59],["Ind. Rivadavia",72]],[["Unión",64],["Sarmiento",58]],[["Riestra",68],["Barracas Central",63]],[["Instituto",62],["Atl. Tucumán",62]],[["Central Córdoba",63],["Estudiantes (RC)",55]],[["Defensa y Justicia",64],["Aldosivi",57]]];
@@ -427,7 +675,7 @@ else if(stage=="po"){b1.textContent="▶ Jugar "+PO.names[rd].toLowerCase();hp.t
 else if(tour==0){b1.textContent="Pasar al Clausura →";hp.textContent="El Apertura terminó. Ahora empieza el segundo torneo del año."}
 else{b1.textContent="🔄 Repetir esta temporada";hp.textContent="La Liga terminó. Abajo ves ascensos y descensos para pasar a la próxima temporada."}
 E2("b2").textContent="⏩ Simular todo el "+["Apertura","Clausura"][tour];E2("b2").disabled=stage=="end"}
-var YR=2026,ONE=0,GC=[],BM,FA,CP,CC,MODE=0,PS,pf,pr,PP,FXP,lastP,pres,tb2,RP,PE,psd,rkk,ZA,ZB,pn=["Final por el 1º ascenso","Reducido · 1ª fase","Reducido · cuartos","Reducido · semifinales","Reducido · final"];
+var YR=2026,ONE=0,BM,FA,CP,CC,MODE=0,PS,pf,pr,PP,FXP,lastP,pres,tb2,RP,PE,psd,rkk,ZA,ZB,pn=["Final por el 1º ascenso","Reducido · 1ª fase","Reducido · cuartos","Reducido · semifinales","Reducido · final"];
 var PQ=[["All Boys",51,"Nueva Chicago",49],["Ferro",62,"Atlanta",61],["Dep. Madryn",57,"San Martín (T)",54],["Los Andes",53,"Temperley",60],["Colón",59,"Patronato",49],["Dep. Morón",58,"Almagro",52],["Mitre (SdE)",52,"Güemes",46],["Almirante Brown",56,"Tristán Suárez",61],["Ciudad de Bolívar",55,"Agropecuario",52],["Central Norte",50,"Gimnasia y Tiro",56],["Godoy Cruz",62,"Dep. Maipú",55],["San Telmo",49,"Quilmes",53],["Acassuso",47,"Midland",57],["Chaco For Ever",54,"Chacarita",49],["Estudiantes (BA)",55,"Colegiales",54],["Racing (Cba)",52,"Gimnasia (Jujuy)",58],["Def. de Belgrano",51,"Atl. Rafaela",52],["San Miguel",46,"San Martín (SJ)",53]];
 var PT=[];PQ.forEach(function(p,i){PT[i]={n:p[0],s:p[1]};PT[18+i]={n:p[2],s:p[3]}});
 var METRO=["All Boys","Ferro","Dep. Morón","Estudiantes (BA)","Almirante Brown","Acassuso","San Miguel","Def. de Belgrano","San Telmo","Nueva Chicago","Chacarita","Atlanta","Temperley","Tristán Suárez","Colegiales","Quilmes","Midland","Almagro","Los Andes"];PT.forEach(function(x){x.m=METRO.indexOf(x.n)>=0?1:0});
@@ -494,8 +742,9 @@ E2("b2").textContent="⏩ Simular toda la Primera Nacional";E2("b2").disabled=PS
 var BT=[["Excursionistas",52],["Arsenal",51],["Sportivo Italiano",49.5],["Dep. Laferrere",49],["Talleres (RE)",48.5],["Comunicaciones",47],["Defensores Unidos",47],["Brown (Adrogué)",47],["Liniers",46],["Villa Dálmine",46],["Camioneros",46],["Dep. Merlo",45.5],["Ituzaingó",45.5],["Flandria",45],["Villa San Carlos",45],["UAI Urquiza",45],["Real Pilar",45],["Argentino (Quilmes)",44.5],["San Martín (Burzaco)",44],["Argentino (Merlo)",44],["Dock Sud",44],["Dep. Armenio",43.5]].map(function(x){return{n:x[0],s:x[1]}});
 var FZ=[[["Douglas Haig",31],["Sportivo Belgrano",30],["Gimnasia (Chivilcoy)",27],["Def. de Belgrano (VR)",27],["9 de Julio (Rafaela)",25],["Sportivo Las Parejas",24],["Atlético Escobar",22],["Independiente (Chivilcoy)",19],["El Linqueño",19],["Gimnasia (C. del Uruguay)",17]],[["San Martín (Formosa)",30],["Bartolomé Mitre",26],["Sol de América",26],["Sarmiento (La Banda)",25],["Juventud Antoniana",25],["Defensores de Vilelas",19],["Boca Unidos",18],["Tucumán Central",17],["Sarmiento (Resistencia)",15]],[["Cipolletti",25],["Argentino (Monte Maíz)",23],["Atenas (RC)",23],["Huracán Las Heras",23],["FADEP",21],["Deportivo Rincón",19],["San Martín (Mendoza)",19],["Costa Brava",18],["Juventud Unida Univ.",17]],[["Olimpo",31],["Alvarado",27],["Kimberley",26],["Villa Mitre",23],["Germinal",18],["Sol de Mayo",18],["Guillermo Brown",17],["Santamarina",13],["Círculo Deportivo",13]]];
 var FT=[],FZi=[];FZ.forEach(function(z,i){var g=i?16:18;FZi.push([]);z.forEach(function(x){FZi[i].push(FT.length);FT.push({n:x[0],s:Math.round((36+8*x[1]/g)*10)/10})})});
-function bg(n){var c=C[n];if(c)return"<i class='bd' style='background:linear-gradient(135deg,"+c[0]+" 50%,"+c[1]+" 50%)'></i>"+n;var h=0;for(var k=0;k<n.length;k++)h=(h*31+n.charCodeAt(k))%360;return"<i class='bd' style='background:hsl("+h+",55%,48%)'></i>"+n}
+function bg(n){if(typeof FLAG!="undefined"&&FLAG[n])return"<img class='flg' src='https://flagcdn.com/w40/"+FLAG[n]+".png' alt='' loading='lazy' onerror=\"this.style.visibility='hidden'\">"+n;var c=C[n];if(c)return"<i class='bd' style='background:linear-gradient(135deg,"+c[0]+" 50%,"+c[1]+" 50%)'></i>"+n;var h=0;for(var k=0;k<n.length;k++)h=(h*31+n.charCodeAt(k))%360;return"<i class='bd' style='background:hsl("+h+",55%,48%)'></i>"+n}
 function gn(K,i){return K.T[i].n}
+var GC=[];function setGC(){GC[0]=0;GC[1]=0;GC[2]=BM;GC[3]=FA;GC[4]=CP;GC[5]=CC}
 function mkR(nm,ph,ms,ko,neu){return{nm:nm,ph:ph,ms:ms.map(function(m){return{h:m[0],a:m[1]}}),ko:ko,neu:neu}}
 function mkRR(ids){var a=ids.slice(),n,r,k,f,o=[];if(a.length%2)a.push(null);n=a.length;for(r=0;r<n-1;r++){f=[];for(k=0;k<n/2;k++){var x=a[k],y=a[n-1-k];if(x!=null&&y!=null)f.push((r+k)%2?[x,y]:[y,x])}o.push(f);a.splice(1,0,a.pop())}return o}
 function dbl(R){return R.concat(R.map(function(f){return f.map(function(m){return[m[1],m[0]]})}))}
@@ -504,15 +753,19 @@ function newS(K){K.S=K.T.map(function(){return{pj:0,g:0,e:0,p:0,gf:0,gc:0,pt:0}}
 function recS(K,h,a,x,y){var H=K.S[h],A=K.S[a],ph=x>y?3:x==y?1:0,pa=y>x?3:x==y?1:0;H.pj++;A.pj++;H.gf+=x;H.gc+=y;A.gf+=y;A.gc+=x;H.pt+=ph;A.pt+=pa;if(x>y){H.g++;A.p++}else if(x<y){A.g++;H.p++}else{H.e++;A.e++}K.tp[h]+=ph;K.tp[a]+=pa;K.tn[h]++;K.tn[a]++}
 function ord(K,ids){return ids.slice().sort(function(x,y){var a=K.S[x],b=K.S[y];return b.pt-a.pt||(b.gf-b.gc)-(a.gf-a.gc)||b.gf-a.gf||K.tb[x]-K.tb[y]})}
 function gD(K,m){return(K.E[m.h]-K.E[m.a])/(K.sc*.9)}
-function scoreG(K,m,neu){return CORE.match(gD(K,m),neu?1:K.fh,neu?1:K.fa,K.fm[m.h],K.fm[m.a])}
-function setG(K,m,ko,neu,x,y){var f=CORE.form(K.fm[m.h],K.fm[m.a],x,y,gD(K,m),neu?1:K.fh,neu?1:K.fa);K.fm[m.h]=f[0];K.fm[m.a]=f[1];m.gh=x;m.ga=y;
-if(ko){if(x==y){m.pen=1;m.w=Math.random()<.5+(K.E[m.h]-K.E[m.a])/300?m.h:m.a}else m.w=x>y?m.h:m.a;m.l=m.w==m.h?m.a:m.h}else{m.w=-1;recS(K,m.h,m.a,x,y)}}
+// goles base: local/visitante, cancha neutral, o anfitrión en su torneo (media localía)
+function basG(K,m,neu){if(!neu)return[K.fh,K.fa];if(K.hosts&&K.hosts[m.h])return K.hb||[K.fh,K.fa];var b=K.fn||1;return[b,b]}
+function scoreG(K,m,neu){var q=basG(K,m,neu);return CORE.match(gD(K,m),q[0],q[1],K.fm[m.h],K.fm[m.a])}
+function setG(K,m,ko,neu,x,y){var q=basG(K,m,neu),f=CORE.form(K.fm[m.h],K.fm[m.a],x,y,gD(K,m),q[0],q[1]);K.fm[m.h]=f[0];K.fm[m.a]=f[1];m.gh=x;m.ga=y;
+if(m.leg==1){m.w=-1;return}
+if(ko&&m.p){var ah=x+m.p.ga,aa=y+m.p.gh;m.agg=[ah,aa];if(ah==aa){m.pen=1;m.w=Math.random()<.5+(K.E[m.h]-K.E[m.a])/300?m.h:m.a}else m.w=ah>aa?m.h:m.a;m.l=m.w==m.h?m.a:m.h}
+else if(ko){if(x==y){m.pen=1;m.w=Math.random()<.5+(K.E[m.h]-K.E[m.a])/300?m.h:m.a}else m.w=x>y?m.h:m.a;m.l=m.w==m.h?m.a:m.h}else{m.w=-1;recS(K,m.h,m.a,x,y)}}
 function kG(K,m){return"G"+K.id+"_"+K.ri+"_"+K.rounds[K.ri].ms.indexOf(m)}
 function pm(K,m,ko,neu){var k=kG(K,m),r=edGet(k);if(r)edClear(k);else r=scoreG(K,m,neu);setG(K,m,ko,neu,r[0],r[1])}
 function applyG(i){var K=GC[i],R=K.rounds[K.ri],n=0;R.ms.forEach(function(m){if(m.w!=null)return;var k=kG(K,m),r=edGet(k);if(r){edClear(k);setG(K,m,R.ko,R.neu,r[0],r[1]);n++}});if(!n)flash();adv(K);drawG(K)}
-function cardG(K,R){var P="G"+K.id,i=GC.indexOf(K);edStart(P);
-var rows=R.ms.map(function(m){if(m.w!=null)return edDone(bg(gn(K,m.h)),bg(gn(K,m.a)),m.gh,m.ga,R.ko?(m.w==m.h?1:2):(m.gh>m.ga?1:m.gh<m.ga?2:0),m.pen);return edRow(P,kG(K,m),bg(gn(K,m.h)),bg(gn(K,m.a)),function(){return scoreG(K,m,R.neu)})}).join("");
-return"<div class='c'><h2>▶ "+R.nm+(R.neu?" · cancha neutral":"")+" · partidos</h2>"+ED_HELP+(R.ko?"<p class='fxh'>Partido único: si termina empatado se define por penales.</p>":"")+"<div class='pg2'>"+rows+"</div>"+edBar(P,"applyG("+i+")")+"</div>"}
+function cardG(K,R,flt){var P="G"+K.id,i=GC.indexOf(K);edStart(P);
+var rows=R.ms.filter(function(m){return!flt||flt(m)}).map(function(m){if(m.w!=null)return edDone(bg(gn(K,m.h)),bg(gn(K,m.a)),m.gh,m.ga,R.ko&&m.leg!=1?(m.w==m.h?1:2):(m.gh>m.ga?1:m.gh<m.ga?2:0),m.pen);return edRow(P,kG(K,m),bg(gn(K,m.h)),bg(gn(K,m.a)),function(){return scoreG(K,m,R.neu)})}).join("");
+return"<div class='c'><h2>▶ "+R.nm+(R.neu?" · cancha neutral":"")+" · partidos</h2>"+ED_HELP+(R.leg==1?"<p class='fxh'>Partido de ida: la llave se define en la vuelta, por el resultado global.</p>":R.leg==2?"<p class='fxh'>Vuelta: gana el que hace más goles sumando los dos partidos; si el global queda igualado, penales.</p>":R.ko?"<p class='fxh'>Partido único: si termina empatado se define por penales.</p>":"")+"<div class='pg2'>"+rows+"</div>"+edBar(P,"applyG("+i+")")+"</div>"}
 function adv(K){var R=K.rounds[K.ri];if(R.ms.every(function(m){return m.w!=null})){var nx=K.gen(R);if(nx){K.rounds.push(nx);K.ri++}else K.done=1}}
 function gstep(K,one){if(K.done)return;var R=K.rounds[K.ri],td=R.ms.filter(function(m){return m.w==null});(one?td.slice(0,1):td).forEach(function(m){pm(K,m,R.ko,R.neu)});adv(K)}
 function gp(i,ri,mi){var K=GC[i],R=K.rounds[ri],m=R.ms[mi];if(!m||m.w!=null)return;pm(K,m,R.ko,R.neu);adv(K);drawG(K)}
@@ -576,27 +829,28 @@ K.gen=function(R){if(!R){var id=tm.map(function(_,i){return i}).sort(function(){
 if(R.ms.length==1){K.res.first=R.ms[0].w;return null}var r=kon(K,R,R.ph+1);r.neu=1;return r};
 K.ban=function(){return chip("🏅","Campeón de la Copa Argentina",gn(K,K.res.first))};K.rounds=[K.gen(null)];return K}
 function mrow(K,m,ri,mi){var pl=m.w!=null,mid=pl?m.gh+" - "+m.ga+(m.pen?" (pen.)":""):(ONE?"<button onclick='gp("+GC.indexOf(K)+","+ri+","+mi+")'>▶</button>":"vs");return"<div class='m'><span"+(pl&&m.w==m.h?" class='w2'":"")+">"+bg(gn(K,m.h))+"</span><b>"+mid+"</b><span"+(pl&&m.w==m.a?" class='w2'":"")+">"+gn(K,m.a)+"</span></div>"}
-function mcG(K,m,ri,mi){var pl=m.w!=null;function row(t,g){return"<div class='r"+(pl&&m.w==t?" w":"")+"'><span>"+bg(gn(K,t))+"</span><b>"+(pl?g:"")+"</b></div>"}return"<div class='mc'>"+row(m.h,m.gh)+row(m.a,m.ga)+(m.pen?"<div class='pn'>Definido por penales</div>":"")+(!pl&&ONE?"<div class='pn'><button onclick='gp("+GC.indexOf(K)+","+ri+","+mi+")'>▶ Jugar este partido</button></div>":"")+"</div>"}
+function mcG(K,m,ri,mi){var pl=m.w!=null;function row(t,g){return"<div class='r"+(pl&&m.w==t?" w":"")+"'><span>"+bg(gn(K,t))+"</span><b>"+(pl?g:"")+"</b></div>"}return"<div class='mc'>"+row(m.h,m.gh)+row(m.a,m.ga)+(m.agg?"<div class='pn'>Global "+m.agg[0]+"-"+m.agg[1]+(m.pen?" · penales":"")+"</div>":m.pen?"<div class='pn'>Definido por penales</div>":"")+(!pl&&ONE?"<div class='pn'><button onclick='gp("+GC.indexOf(K)+","+ri+","+mi+")'>▶ Jugar este partido</button></div>":"")+"</div>"}
 function ztG(K,tb){var o=ord(K,tb.ids),h="<tr><th>#</th><th class='n'>Equipo</th><th>PJ</th><th class='hm'>G</th><th class='hm'>E</th><th class='hm'>P</th><th class='hm'>DG</th><th>Pts</th></tr>";
-o.forEach(function(i,k){var s=K.S[i];h+="<tr class='"+(tb.cl(k,o.length)||"")+"'><td>"+(k+1)+"</td><td class='n'>"+bg(gn(K,i))+"</td><td>"+s.pj+"</td><td class='hm'>"+s.g+"</td><td class='hm'>"+s.e+"</td><td class='hm'>"+s.p+"</td><td class='hm'>"+(s.gf-s.gc)+"</td><td class='p'>"+s.pt+"</td></tr>"});
+o.forEach(function(i,k){var s=K.S[i];h+="<tr class='"+(tb.cl(k,o.length,i)||"")+"'><td>"+(k+1)+"</td><td class='n'>"+bg(gn(K,i))+"</td><td>"+s.pj+"</td><td class='hm'>"+s.g+"</td><td class='hm'>"+s.e+"</td><td class='hm'>"+s.p+"</td><td class='hm'>"+(s.gf-s.gc)+"</td><td class='p'>"+s.pt+"</td></tr>"});
 return"<div class='c'><h2>"+tb.t+"</h2><div class='sc'><table>"+h+"</table></div></div>"}
-function viewG(K){var h="",R=K.rounds[K.ri],i;
-if(tab==0&&K.tabs.length){h="<div class='g'>"+K.tabs.map(function(t){return ztG(K,t)}).join("")+"</div><p class='lg' style='margin:6px 2px 12px'>"+K.leg+"</p>";
-if(!K.done&&!R.ko)h+=cardG(K,R);
-h+=navCard("G"+K.id,K.rounds.map(function(r,ri){return{r:r,ri:ri}}).filter(function(o){return!o.r.ko&&o.r.ms.length&&o.r.ms.every(function(m){return m.w!=null})}).map(function(o){return{t:o.r.nm,h:"<div class='pg'>"+o.r.ms.map(function(m,mi){return mrow(K,m,o.ri,mi)}).join("")+"</div>"}}),"Resultados");
+function viewG(K){var h="",R=K.rounds[K.ri],i,tg=K.tg&&tab>=10?K.tg[tab-10]:null,tabsV=tg?tg.f.map(function(x){return K.tabs[x]}):K.tabs,inT={},flt=null;
+if(tg){tabsV.forEach(function(t){t.ids.forEach(function(x){inT[x]=1})});flt=function(m){return inT[m.h]||inT[m.a]}}
+if((tab==0||tg)&&K.tabs.length){h="<div class='g'>"+tabsV.map(function(t){return ztG(K,t)}).join("")+"</div><p class='lg' style='margin:6px 2px 12px'>"+(tg?tg.leg:K.leg)+"</p>";
+if(!K.done&&!R.ko)h+=cardG(K,R,flt);
+h+=navCard("G"+K.id,K.rounds.map(function(r,ri){return{r:r,ri:ri}}).filter(function(o){return!o.r.ko&&o.r.ms.length&&o.r.ms.every(function(m){return m.w!=null})}).map(function(o){return{t:o.r.nm,h:"<div class='pg'>"+o.r.ms.map(function(m,mi){return!flt||flt(m)?mrow(K,m,o.ri,mi):""}).join("")+"</div>"}}),"Resultados");
 if(!K.done&&R.ko)h+="<div class='c'><p class='help'>Ya empezaron los playoffs: mirá la pestaña Llaves.</p></div>"}
 else{if(!K.done&&R.ko)h+=cardG(K,R);K.rounds.forEach(function(r,ri){if(r.ko)h+="<div class='c'><h2>"+(ri==K.ri&&!K.done?"▶ ":"")+r.nm+(r.neu?" · cancha neutral":"")+"</h2><div class='pg'>"+r.ms.map(function(m,mi){return mcG(K,m,ri,mi)}).join("")+"</div></div>"});
 if(!h)h="<div class='c'><p class='help'>Todavía no empezaron las llaves. Se juegan al terminar la fase regular.</p></div>"}
 return h}
 function drawG(K){sw();var E2=document.getElementById.bind(document),R=K.rounds[K.ri],cur=K.done?K.phs.length:R.ph;
-E2("hs").textContent=K.nm+" "+YR+(K.done?" · terminado":" · "+R.nm);
+E2("hs").textContent=K.nm+(K.sel?"":" "+YR)+(K.done?" · terminado":" · "+R.nm);
 E2("stp").innerHTML=K.phs.map(function(x,i){return"<span class='st "+(i<cur?"dn":i==cur?"cu":"")+"'>"+(i<cur?"✓ ":"")+x+"</span>"}).join("");
-E2("ban").innerHTML=(K.done?K.ban():"")+mover();
-E2("tabs").innerHTML=(K.tabs.length?[[0,"📊 Tablas"],[1,"⚔️ Llaves"]]:[[1,"⚔️ Llaves"]]).map(function(x){return"<button class='"+(tab==x[0]?"on":"")+"' onclick='tab="+x[0]+";drawG(GC["+GC.indexOf(K)+"])'>"+x[1]+"</button>"}).join("");
+E2("ban").innerHTML=(K.done?"<div class='trs'>"+K.ban()+"</div>":"")+(K.sel?"":mover());
+E2("tabs").innerHTML=(K.tg?K.tg.map(function(g,i){return[10+i,"📊 "+g.t]}).concat([[1,"⚔️ Llaves"]]):K.tabs.length?[[0,"📊 Tablas"],[1,"⚔️ Llaves"]]:[[1,"⚔️ Llaves"]]).map(function(x){return"<button class='"+(tab==x[0]?"on":"")+"' onclick='tab="+x[0]+";drawG(GC["+GC.indexOf(K)+"])'>"+x[1]+"</button>"}).join("");
 E2("v").innerHTML=viewG(K);
 var b1=E2("b1"),hp=E2("help");
-if(K.done){b1.textContent="🔄 Repetir esta temporada";hp.textContent="Terminó. Mirá abajo ascensos y descensos."}
-else{b1.textContent=ONE?"▶ Jugar próximo partido":"▶ Jugar: "+R.nm.toLowerCase();var pn=R.ms.filter(function(m){return m.w==null})[0];hp.textContent=(R.ko?"Partido único: el que pierde queda eliminado. ":"")+(ONE&&pn?"Próximo: "+gn(K,pn.h)+" vs "+gn(K,pn.a)+". También podés tocar ▶ en cualquier partido.":"")}
+if(K.done){b1.textContent=K.sel?"🔄 Volver a jugar esta competencia":"🔄 Repetir esta temporada";hp.textContent=K.sel?"Terminó. Arriba están los campeones y clasificados.":"Terminó. Mirá abajo ascensos y descensos."}
+else{b1.textContent=ONE?"▶ Jugar próximo partido":"▶ Jugar: "+R.nm.toLowerCase();var pn=R.ms.filter(function(m){return m.w==null})[0];hp.textContent=(R.leg?"Llave de ida y vuelta: pasa el que hace más goles en el global. ":R.ko?"Partido único: el que pierde queda eliminado. ":"")+(ONE&&pn?"Próximo: "+gn(K,pn.h)+" vs "+gn(K,pn.a)+". También podés tocar ▶ en cualquier partido.":"")}
 E2("b2").textContent="⏩ Simular toda la competencia";E2("b2").disabled=!!K.done}
 function mover(){var okL=champ[1]!=null,okP=PS=="end",okB=BM&&BM.done,okF=FA&&FA.done,okC=CC&&CC.done;if(!okL&&!okP&&!okB&&!okF&&!okC)return"";
 var o=okL?annual():null,RL=okL?rel():null,ok=okL&&okP&&okB&&okF&&okC,w="<i>falta terminar</i>",nn=function(K,a){return a.map(function(i){return"<b>"+gn(K,i)+"</b>"}).join(", ")},PTK={T:PT};
@@ -620,17 +874,17 @@ mt.slice(2).concat(it).forEach(function(t){fIn.push({n:t.n,s:cl(38+(t.s-46)*.5,3
 while(bIn.length<4)bIn.push({n:"Ascendido Primera C "+(++c)+" "+YR,s:42});c=0;while(fIn.length<6)fIn.push({n:"Ascendido Regional "+(++c)+" "+YR,s:40});
 var cIn=BM.dn.map(function(i){return{n:BT[i].n,s:cl(38+(BT[i].s-44)*.7,34,44)}});c=0;while(cIn.length<cFree.length)cIn.push({n:"Ascendido Amateur "+(++c)+" "+YR,s:36});
 bFree.forEach(function(id,k){BT[id]=bIn[k]});fFree.forEach(function(id,k){FT[id]=fIn[k]});cFree.forEach(function(id,k){CT[id]=cIn[k]});
-YR++;reset();resetP();BM=mkB();FA=mkF();CC=mkP();CP=mkC();GC=[0,0,BM,FA,CP,CC];redraw()}
-function redraw(){MODE==0?draw():MODE==1?drawP():drawG(GC[MODE])}
-function sw(){document.getElementById("ht").textContent="Fútbol argentino "+YR;document.getElementById("b5").textContent="🎯 Partido a partido: "+(ONE?"SÍ":"NO");
+YR++;reset();resetP();BM=mkB();FA=mkF();CC=mkP();CP=mkC();setGC();redraw()}
+function redraw(){MODE>=10?drawSel(MODE):MODE==0?draw():MODE==1?drawP():drawG(GC[MODE])}
+function sw(){if(SMODE)return selSw();document.getElementById("sw").classList.remove("rows");document.getElementById("ht").textContent="Fútbol argentino "+YR;document.getElementById("b5").textContent="🎯 Partido a partido: "+(ONE?"SÍ":"NO");
 document.getElementById("sw").innerHTML=["🏆 Liga","🥈 Primera Nacional","🥉 B Metro","🌎 Federal A","🏅 Copa Argentina","🔰 Primera C"].map(function(x,i){return"<button class='"+(MODE==i?"on":"")+"' onclick='setM("+i+")'>"+x+"</button>"}).join("")}
-function setM(m){MODE=m;tab=m==4?1:0;if(m==1){RP?drawP():resetP()}else if(m>=2)drawG(GC[m]);else draw()}
-function rstG(m){if(m==2)BM=mkB();else if(m==3)FA=mkF();else if(m==4)CP=mkC();else CC=mkP();GC=[0,0,BM,FA,CP,CC];tab=m==4?1:0;drawG(GC[m])}
-document.getElementById("b1").onclick=function(){if(MODE>=2){var K=GC[MODE];if(K.done)rstG(MODE);else{gstep(K,ONE);drawG(K)}return}if(MODE==1){if(PS=="end")resetP();else{stepP();drawP()}return}if(stage=="end"){if(tour==0)startTour(1);else{reset();return}}else step();draw()};
-document.getElementById("b2").onclick=function(){if(MODE>=2){var K=GC[MODE];while(!K.done)gstep(K,0);drawG(K);return}if(MODE==1){while(PS!="end")stepP();drawP();return}var t=tour;while(stage!="end"&&tour==t)step();draw()};
+function setM(m){if(m>=10){MODE=m;var K=selGet(m);tab=K&&K.tg?10:K&&!K.tabs.length?1:0;K?drawG(K):drawDep(m);return}MODE=m;tab=m==4?1:0;if(m==1){RP?drawP():resetP()}else if(m>=2)drawG(GC[m]);else draw()}
+function rstG(m){if(m>=10)return selReset(m);if(m==2)BM=mkB();else if(m==3)FA=mkF();else if(m==4)CP=mkC();else CC=mkP();setGC();tab=m==4?1:0;drawG(GC[m])}
+document.getElementById("b1").onclick=function(){if(MODE>=10&&!GC[MODE]){SELD[MODE].deps.forEach(selEnsure);setM(MODE);return}if(MODE>=2){var K=GC[MODE];if(K.done)rstG(MODE);else{gstep(K,ONE);drawG(K)}return}if(MODE==1){if(PS=="end")resetP();else{stepP();drawP()}return}if(stage=="end"){if(tour==0)startTour(1);else{reset();return}}else step();draw()};
+document.getElementById("b2").onclick=function(){if(MODE>=10&&!GC[MODE])return;if(MODE>=2){var K=GC[MODE];while(!K.done)gstep(K,0);drawG(K);return}if(MODE==1){while(PS!="end")stepP();drawP();return}var t=tour;while(stage!="end"&&tour==t)step();draw()};
 document.getElementById("b4").onclick=function(){MODE>=2?rstG(MODE):MODE==1?resetP():reset()};
 document.getElementById("b5").onclick=function(){ONE=!ONE;redraw()};
-reset();BM=mkB();FA=mkF();CC=mkP();CP=mkC();GC=[0,0,BM,FA,CP,CC];sw();
+reset();BM=mkB();FA=mkF();CC=mkP();CP=mkC();setGC();sw();
 </script>
 <script>
 (function(){
@@ -860,13 +1114,15 @@ window.EU={set(c){S.country=c;const co=COUNTRIES[c];if(!co.leagues.includes(S.cu
 })();
 </script>
 <script>
-(function(){var KEY='simfut_country',cur;try{cur=localStorage.getItem(KEY)}catch(x){}if(!/^(ar|en|es)$/.test(cur||''))cur='ar';
-var bs=document.querySelectorAll('#cty button');
-function set(c){cur=c;try{localStorage.setItem(KEY,c)}catch(x){}document.body.dataset.c=c;
-document.getElementById('secAR').hidden=c!='ar';document.getElementById('secEU').hidden=c=='ar';
-bs.forEach(function(b){b.classList.toggle('on',b.dataset.c==c)});
-if(c=='ar')redraw();else EU.set(c)}
+(function(){var KEY='simfut_country',MK='simfut_mode',cur,md;try{cur=localStorage.getItem(KEY);md=localStorage.getItem(MK)}catch(x){}if(!/^(ar|en|es)$/.test(cur||''))cur='ar';if(md!='sel')md='clubes';
+var bs=document.querySelectorAll('#cty button'),ms=document.querySelectorAll('#mode button');
+function show(sel,eu){document.getElementById('secAR').hidden=eu;document.getElementById('secEU').hidden=!eu;document.getElementById('arHelp').hidden=sel;document.getElementById('selHelp').hidden=!sel}
+function set(c){cur=c;try{localStorage.setItem(KEY,c)}catch(x){}document.body.dataset.c=c;show(false,c!='ar');
+bs.forEach(function(b){b.classList.toggle('on',b.dataset.c==c)});if(c=='ar')redraw();else EU.set(c)}
+function setMode(m){md=m;try{localStorage.setItem(MK,m)}catch(x){}ms.forEach(function(b){b.classList.toggle('on',b.dataset.m==m)});document.getElementById('cty').hidden=m=='sel';
+if(m=='sel'){document.body.dataset.c='sel';show(true,false);selEnter()}else{selLeave();set(cur)}}
 bs.forEach(function(b){b.onclick=function(){if(b.dataset.c!=cur){set(b.dataset.c);window.scrollTo(0,0)}}});
-set(cur)})();
+ms.forEach(function(b){b.onclick=function(){if(b.dataset.m!=md){setMode(b.dataset.m);window.scrollTo(0,0)}}});
+setMode(md)})();
 </script>
 </body></html>
